@@ -17,259 +17,51 @@
       margin:0; font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       background: var(--bg); color:var(--ink); display:grid; place-items:center; min-height:100vh; overflow:hidden;
       -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      text-rendering: optimizeLegibility;
     }
-
-    /* Layers */
     .layer{position:fixed; inset:0; pointer-events:none}
-
-    /* Subtle film grain for premium texture */
-    .grain{
-      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0 .02 .04 .06 .08 .1 .12 .14 .16 .18 .2 .22 .24 .26 .28 .3"/></feComponentTransfer></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
-      opacity:.08; mix-blend-mode:overlay; z-index:2
-    }
-
-    /* Content */
+    .grain{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 0 .02 .04 .06 .08 .1 .12 .14 .16 .18 .2 .22 .24 .26 .28 .3"/></feComponentTransfer></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>'); opacity:.08; mix-blend-mode:overlay; z-index:2}
     .wrap{position:relative; z-index:3; text-align:center; padding:48px 20px; width:min(720px,100%)}
     .logo{width:88px; height:auto; display:block; margin:0 auto 18px; filter: drop-shadow(0 8px 22px rgba(142,14,98,.35));}
-    h1{margin:0 0 28px; font-weight:600; font-size:clamp(1.2rem,1.4vw+1rem,1.6rem); color:rgba(255,255,255,.92)}
+    h1{margin:0 0 28px; font-weight:700; font-size:clamp(1.3rem,1.6vw+1rem,1.9rem); color:#fff; line-height:1.3;}
+    h1 span{color:var(--brand);}
     form{display:grid; grid-template-columns:1fr auto; gap:10px; width:min(520px,100%); margin:0 auto}
     input[type=email]{height:48px; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff; outline:none}
     input::placeholder{color:rgba(255,255,255,.55)}
     input:focus{border-color:rgba(255,255,255,.35); box-shadow:0 0 0 4px rgba(142,14,98,.22)}
     button{height:48px; padding:0 18px; border:0; border-radius:12px; background:linear-gradient(180deg,#a31a75,#6e0b4b); color:#fff; font-weight:700; letter-spacing:.2px; cursor:pointer; box-shadow:0 10px 24px rgba(142,14,98,.35), inset 0 1px 0 rgba(255,255,255,.14)}
     button:hover{filter:brightness(1.04)}
-
-    footer{
-      position:fixed; bottom:12px; left:0; right:0; text-align:center; font-size:.85rem;
-      color:rgba(255,255,255,.75); z-index:3;
-      pointer-events:none;
-    }
-    footer small{
-      display:inline-block; pointer-events:auto;
-      background:rgba(10,10,12,.6); border:1px solid rgba(255,255,255,.12);
-      padding:8px 12px; border-radius:10px; backdrop-filter:saturate(140%) blur(6px);
-    }
-
-    /* Accessibility: respect reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      #field, #constellations { display:none !important; }
-    }
-
-    /* Mobile tweaks */
-    @media(max-width:560px){
-      form{grid-template-columns:1fr}
-      button{width:100%}
-      .logo{width:76px}
-      h1{margin-bottom:22px}
-    }
+    footer{position:fixed; bottom:12px; left:0; right:0; text-align:center; font-size:.85rem; color:rgba(255,255,255,.6); z-index:3}
+    @media(max-width:560px){form{grid-template-columns:1fr}button{width:100%}.logo{width:76px}h1{font-size:1.4rem}}
   </style>
 </head>
 <body>
-  <!-- Fluid additive gradient field -->
   <canvas id="field" class="layer" aria-hidden="true"></canvas>
-  <!-- Particle network + distributed category chips -->
   <canvas id="constellations" class="layer" aria-hidden="true"></canvas>
   <div class="grain layer" aria-hidden="true"></div>
-
   <main class="wrap" role="main">
     <img src="cigale.png" alt="Cigale logo" class="logo" />
-    <h1>The booking marketplace app built for live entertainment</h1>
-
+    <h1><span>Cigale</span> is the future of booking — a marketplace built for unforgettable live entertainment</h1>
     <form id="waitlist" novalidate>
       <input type="email" id="email" name="email" placeholder="Enter your email" required />
       <button type="submit">Join the Waitlist</button>
     </form>
   </main>
-
-  <footer>
-    <small>© <span id="year"></span> Cigale. All rights reserved.</small>
-  </footer>
-
+  <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
   <script>
-    // ===== FLUID COLOUR FIELD (additive blobs + noise) =====
-    const field = document.getElementById('field');
-    const ctx = field.getContext('2d');
-    const DPR = Math.min(window.devicePixelRatio||1, 2);
-    let W, H, t = 0;
-
-    function resizeField() {
-      W = field.width = Math.floor(innerWidth * DPR);
-      H = field.height = Math.floor(innerHeight * DPR);
-      field.style.width = innerWidth + 'px';
-      field.style.height = innerHeight + 'px';
-    }
-    resizeField();
-    addEventListener('resize', resizeField);
-
-    const blobs = Array.from({length:5}, (_,i)=>({
-      x: Math.random(), y: Math.random(), r: 0.18 + Math.random()*0.18,
-      hue: [325, 335, 300, 260, 285][i%5], speed: 0.4 + Math.random()*0.6
-    }));
-
-    function paintField() {
-      t += 0.005;
-      ctx.clearRect(0,0,W,H);
-      ctx.globalCompositeOperation = 'lighter';
-      for (const b of blobs) {
-        const cx = (b.x + Math.sin(t*b.speed + b.hue)*0.02) * W;
-        const cy = (b.y + Math.cos(t*b.speed + b.hue)*0.02) * H;
-        const r = Math.max(W,H) * b.r;
-        const grad = ctx.createRadialGradient(cx,cy, r*0.1, cx,cy, r);
-        grad.addColorStop(0, `hsla(${b.hue}, 80%, 55%, .45)`);
-        grad.addColorStop(1, `hsla(${b.hue}, 80%, 55%, 0)`);
-        ctx.fillStyle = grad;
-        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
-      }
-      ctx.globalCompositeOperation = 'source-over';
-      requestAnimationFrame(paintField);
-    }
-    paintField();
-
-    // ===== PARTICLE NETWORK + DISTRIBUTED CATEGORY CHIPS =====
-    const cnv = document.getElementById('constellations');
-    const c2 = cnv.getContext('2d');
-
-    function resizeNet(){
-      cnv.width = Math.floor(innerWidth * DPR);
-      cnv.height = Math.floor(innerHeight * DPR);
-      cnv.style.width = innerWidth + 'px';
-      cnv.style.height = innerHeight + 'px';
-    }
-    resizeNet();
-    addEventListener('resize', resizeNet);
-
-    const NODE_COUNT = innerWidth < 560 ? 60 : 100;
-    const nodes = Array.from({length:NODE_COUNT}, () => ({
-      x: Math.random()*cnv.width,
-      y: Math.random()*cnv.height,
-      vx: (Math.random()-.5)*.25*DPR,
-      vy: (Math.random()-.5)*.25*DPR
-    }));
-
-    // Entertainment categories (not only music)
-    const categories = [
-      { emoji:'🎭', label:'Comedy' }, { emoji:'🪄', label:'Magic' }, { emoji:'🎤', label:'Music' },
-      { emoji:'💃', label:'Dance' }, { emoji:'🎪', label:'Circus' }, { emoji:'🎧', label:'DJ' },
-      { emoji:'🤹‍♀️', label:'Variety' }, { emoji:'🎷', label:'Jazz' }, { emoji:'🎸', label:'Guitar' },
-      { emoji:'🎙️', label:'MC' }, { emoji:'🕺', label:'Performers' }, { emoji:'🎮', label:'eSports Hosts' }
-    ];
-
-    // Rejection-sampling placement to avoid clustering
-    const MIN_DIST = (innerWidth < 560 ? 90 : 140) * DPR;
-    const chips = [];
-    function placeChip() {
-      let tries = 0; const maxTries = 200;
-      while (tries++ < maxTries) {
-        const x = Math.random()*cnv.width, y = Math.random()*cnv.height;
-        if (y < 120*DPR || y > cnv.height - 80*DPR) continue; // keep clear of logo/footer
-        let ok = true;
-        for (const c of chips) {
-          const dx = c.x - x, dy = c.y - y;
-          if (dx*dx + dy*dy < MIN_DIST*MIN_DIST) { ok = false; break; }
-        }
-        if (ok) return { x, y };
-      }
-      return { x: Math.random()*cnv.width, y: Math.random()*cnv.height };
-    }
-    categories.forEach((cat)=>{
-      const p = placeChip();
-      chips.push({ ...cat, x:p.x, y:p.y, vx:(Math.random()-.5)*.15*DPR, vy:(Math.random()-.5)*.15*DPR });
-    });
-
-    // Pointer interaction for connecting lines
-    let mouse = { x:-9999, y:-9999, active:false };
-    addEventListener('mousemove', e => { mouse = { x:e.clientX*DPR, y:e.clientY*DPR, active:true }; });
-    addEventListener('mouseleave', () => { mouse.active = false; });
-    addEventListener('touchstart', e => { const t=e.touches[0]; mouse={x:t.clientX*DPR,y:t.clientY*DPR,active:true}; }, {passive:true});
-    addEventListener('touchmove', e => { const t=e.touches[0]; mouse={x:t.clientX*DPR,y:t.clientY*DPR,active:true}; }, {passive:true});
-    addEventListener('touchend', () => { mouse.active=false; });
-
-    function draw() {
-      c2.clearRect(0,0,cnv.width,cnv.height);
-
-      // move nodes
-      for (const n of nodes) {
-        n.x += n.vx; n.y += n.vy;
-        if (n.x<0||n.x>cnv.width) n.vx*=-1;
-        if (n.y<0||n.y>cnv.height) n.vy*=-1;
-      }
-      // gentle chip drift + bounce
-      for (const ch of chips) {
-        ch.x += ch.vx; ch.y += ch.vy;
-        if (ch.x<30*DPR || ch.x>cnv.width-30*DPR) ch.vx*=-1;
-        if (ch.y<120*DPR || ch.y>cnv.height-40*DPR) ch.vy*=-1;
-      }
-
-      // base node-to-node connections
-      const linkDist = (innerWidth < 560 ? 90 : 120) * DPR;
-      c2.lineWidth = 1;
-      for (let i=0;i<nodes.length;i++) {
-        for (let j=i+1;j<nodes.length;j++) {
-          const a = nodes[i], b = nodes[j];
-          const dx=a.x-b.x, dy=a.y-b.y; const d2=dx*dx+dy*dy; const th = linkDist*linkDist;
-          if (d2 < th) {
-            const alpha = 1 - d2 / th;
-            c2.strokeStyle = `rgba(255,255,255,${0.12*alpha})`;
-            c2.beginPath(); c2.moveTo(a.x,a.y); c2.lineTo(b.x,b.y); c2.stroke();
-          }
-        }
-      }
-
-      // interactive lines to pointer
-      if (mouse.active) {
-        const mouseDist = (innerWidth < 560 ? 120 : 180) * DPR;
-        for (const a of nodes) {
-          const dx = a.x - mouse.x, dy = a.y - mouse.y; const d2 = dx*dx+dy*dy; const th = mouseDist*mouseDist;
-          if (d2 < th) {
-            const alpha = 1 - d2 / th;
-            c2.strokeStyle = `rgba(255,255,255,${0.18*alpha})`;
-            c2.beginPath(); c2.moveTo(mouse.x,mouse.y); c2.lineTo(a.x,a.y); c2.stroke();
-          }
-        }
-        for (const ch of chips) {
-          const dx = ch.x - mouse.x, dy = ch.y - mouse.y; const d2 = dx*dx+dy*dy; const th = mouseDist*mouseDist;
-          if (d2 < th) {
-            const alpha = 1 - d2 / th;
-            c2.strokeStyle = `rgba(255,255,255,${0.22*alpha})`;
-            c2.beginPath(); c2.moveTo(mouse.x,mouse.y); c2.lineTo(ch.x,ch.y); c2.stroke();
-          }
-        }
-      }
-
-      // draw chips (emoji badges)
-      for (const ch of chips) {
-        const R = 18*DPR;
-        const grd = c2.createRadialGradient(ch.x,ch.y,2, ch.x,ch.y,R);
-        grd.addColorStop(0, 'rgba(255,255,255,.85)');
-        grd.addColorStop(1, 'rgba(255,255,255,.07)');
-        c2.fillStyle = grd; c2.beginPath(); c2.arc(ch.x,ch.y,R,0,Math.PI*2); c2.fill();
-        c2.font = `${16*DPR}px system-ui, Apple Color Emoji`;
-        c2.textAlign = 'center'; c2.textBaseline = 'middle'; c2.fillStyle = 'rgba(10,10,12,.8)';
-        c2.fillText(ch.emoji, ch.x, ch.y+1*DPR);
-      }
-
-      requestAnimationFrame(draw);
-    }
-    draw();
-
-    // ===== Waitlist + year =====
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const form = document.getElementById('waitlist');
-    const email = document.getElementById('email');
-    form.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      const val = email.value.trim();
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)){ email.focus(); return; }
-      try{
-        const k='cigale_waitlist';
-        const list=JSON.parse(localStorage.getItem(k)||'[]');
-        list.push({ email:val, ts:new Date().toISOString() });
-        localStorage.setItem(k, JSON.stringify(list));
-      }catch{}
-      form.querySelector('button').textContent='You’re in!';
-      email.value='';
-    });
+    // fluid background
+    const field=document.getElementById('field'),ctx=field.getContext('2d'),DPR=Math.min(devicePixelRatio||1,2);let W,H,t=0;function resize(){W=field.width=innerWidth*DPR;H=field.height=innerHeight*DPR;field.style.width=innerWidth+'px';field.style.height=innerHeight+'px'}resize();addEventListener('resize',resize);const blobs=Array.from({length:5},(_,i)=>({x:Math.random(),y:Math.random(),r:.18+Math.random()*.18,hue:[325,335,300,260,285][i%5],speed:.4+Math.random()*.6}));function loop(){t+=.005;ctx.clearRect(0,0,W,H);ctx.globalCompositeOperation='lighter';for(const b of blobs){const cx=(b.x+Math.sin(t*b.speed+b.hue)*.02)*W,cy=(b.y+Math.cos(t*b.speed+b.hue)*.02)*H,r=Math.max(W,H)*b.r,grad=ctx.createRadialGradient(cx,cy,r*.1,cx,cy,r);grad.addColorStop(0,`hsla(${b.hue},80%,55%,.45)`);grad.addColorStop(1,`hsla(${b.hue},80%,55%,0)`);ctx.fillStyle=grad;ctx.beginPath();ctx.arc(cx,cy,r,0,2*Math.PI);ctx.fill()}ctx.globalCompositeOperation='source-over';requestAnimationFrame(loop)}loop();
+    // constellation + emojis spread
+    const cnv=document.getElementById('constellations'),c2=cnv.getContext('2d');function resize2(){cnv.width=innerWidth*DPR;cnv.height=innerHeight*DPR;cnv.style.width=innerWidth+'px';cnv.style.height=innerHeight+'px'}resize2();addEventListener('resize',resize2);
+    const nodes=Array.from({length:100},()=>({x:Math.random()*cnv.width,y:Math.random()*cnv.height,vx:(Math.random()-.5)*.25*DPR,vy:(Math.random()-.5)*.25*DPR}));
+    const categories=['🎭','🪄','🎤','💃','🎪','🎧','🤹‍♀️','🎷'];
+    let mx=cnv.width/2,my=cnv.height/2;addEventListener('mousemove',e=>{mx=e.clientX*DPR;my=e.clientY*DPR});
+    function draw(){c2.clearRect(0,0,cnv.width,cnv.height);for(const n of nodes){n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>cnv.width)n.vx*=-1;if(n.y<0||n.y>cnv.height)n.vy*=-1}
+      for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy;if(d2<(140*DPR)*(140*DPR)){const alpha=1-d2/((140*DPR)*(140*DPR));c2.strokeStyle=`rgba(255,255,255,${.12*alpha})`;c2.beginPath();c2.moveTo(a.x,a.y);c2.lineTo(b.x,b.y);c2.stroke()}}}
+      nodes.slice(0,categories.length).forEach((n,i)=>{c2.font=`${20*DPR}px system-ui, Apple Color Emoji`;c2.textAlign='center';c2.textBaseline='middle';c2.fillText(categories[i],n.x,n.y)});
+      requestAnimationFrame(draw)}draw();
+    // waitlist simple local
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const form=document.getElementById('waitlist'),email=document.getElementById('email');form.addEventListener('submit',e=>{e.preventDefault();const val=email.value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)){email.focus();return}try{const k='cigale_waitlist',list=JSON.parse(localStorage.getItem(k)||'[]');list.push({email:val,ts:new Date().toISOString()});localStorage.setItem(k,JSON.stringify(list))}catch{}form.querySelector('button').textContent='You’re in!';email.value=''})
   </script>
 </body>
 </html>
