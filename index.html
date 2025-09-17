@@ -7,10 +7,10 @@
   <meta name="description" content="Cigale is the booking marketplace for live entertainment." />
   <meta name="theme-color" content="#8e0e62" />
   
-  <!-- Favicon (consolidated) -->
+  <!-- Favicon (ensure CigaleIcon.png is square and in PNG format) -->
   <link rel="icon" type="image/png" sizes="32x32" href="CigaleIcon.png">
   <link rel="icon" type="image/png" sizes="16x16" href="CigaleIcon.png">
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,37 +20,39 @@
       --brand: #8e0e62; 
       --brand-dark: #6e0b4b; 
       --ink: #fff; 
-      --background: #000; 
+      --bg: #000; 
     }
-
     * { box-sizing: border-box; }
-
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
       font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: var(--background);
+      background: var(--bg);
       color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
       position: relative;
-      overflow-x: hidden; /* Prevents unintended horizontal scrolling */
     }
 
-    /* Background Video with perfect fit on mobile */
+    /* Background Video Container */
     #bg-video {
       position: fixed;
       top: 0;
       left: 0;
+      width: 100vw;
       height: 100vh;
-      width: auto;
-      max-width: 100vw;
-      object-fit: cover;
+      object-fit: cover; /* Crop to fill viewport */
       z-index: -1;
       filter: brightness(0.7);
-      poster: "video-poster.jpg";
+      poster: "video-poster.jpg"; /* Fallback poster (replace with actual path) */
     }
 
-    /* Overlay */
+    /* Overlay for readability */
     body::before {
       content: "";
       position: fixed;
@@ -58,38 +60,44 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
-      z-index: -0.5; /* Ensure content is on top of video */
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+      z-index: -0.5;
       pointer-events: none;
     }
 
-    /* Main Content Container */
+    /* Content Container */
     .content-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      position: relative;
+      z-index: 2;
       width: 90%;
       max-width: 600px;
       text-align: center;
+      padding: 2rem 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease-out forwards;
     }
 
-    /* Logo */
-    .logo {
-      width: 100%;
-      max-width: 160px;
-      height: auto;
+    /* Clickable Logo Link */
+    .logo-link {
+      text-decoration: none;
       display: block;
       margin-bottom: 32px;
+      cursor: pointer;
+    }
+
+    .logo {
+      width: clamp(100px, 12vw, 160px); /* Mobile: 100px → Desktop: 160px */
+      height: auto;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
       transition: transform 0.2s ease;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     }
 
     .logo:hover {
       transform: scale(1.03);
     }
 
-    /* Headline */
+    /* Capitalized Hero Headline */
     h1 {
       margin: 0 0 28px;
       font-weight: 700;
@@ -98,8 +106,8 @@
       letter-spacing: -0.01em;
       line-height: 1.2;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      position: relative;
-      padding-bottom: 16px;
+      text-transform: uppercase; /* Ensures all caps */
+      padding: 0 1rem;
     }
 
     /* Waitlist Form */
@@ -143,7 +151,7 @@
       background: var(--brand);
       color: var(--ink);
       font-weight: 600;
-      font-size: clamp(0.95rem, 1vw, 1rem); /* Responsive font size for button */
+      font-size: clamp(0.95rem, 1vw, 1rem);
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -173,37 +181,52 @@
 
     /* Mobile Adjustments */
     @media (max-width: 480px) {
+      .content-container {
+        padding: 1.5rem 1rem;
+      }
       h1 {
-        font-size: 1.25rem;
+        font-size: clamp(1.25rem, 3.5vw, 1.5rem);
         line-height: 1.4;
         margin-bottom: 24px;
       }
-
       #waitlist {
         gap: 4px;
         width: 100%;
       }
-
       #waitlist input[type="email"] {
         min-width: auto;
       }
-
       #waitlist button {
         padding: 0 16px;
+      }
+    }
+
+    /* Fade In Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   </style>
 </head>
 <body>
-  <!-- Background Video -->
+  <!-- Background Video (Device-specific) -->
   <video autoplay muted loop playsinline id="bg-video">
-    <source src="Cigale Web Video.mp4" type="video/mp4">
+    <!-- Sources will be dynamically set via JavaScript -->
     Your browser does not support the video tag.
   </video>
 
   <!-- Main Content Container -->
   <div class="content-container">
-    <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking Marketplace" class="logo" />
+    <!-- Clickable Logo Link to LinkedIn -->
+    <a href="https://www.linkedin.com/company/cigaleapp" class="logo-link" target="_blank" rel="noopener noreferrer">
+      <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking Marketplace" class="logo" />
+    </a>
     
     <h1>THE EASIEST WAY FOR EVENT PLANNERS TO BOOK ENTERTAINERS</h1>
     
@@ -211,36 +234,52 @@
       <input type="email" id="email" name="email" placeholder="Enter your email" required />
       <button type="submit">JOIN THE WAITLIST</button>
     </form>
-
     <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
   </div>
 
   <script>
+    // Set background video based on device (mobile vs desktop)
+    const bgVideo = document.getElementById('bg-video');
+    const isMobile = window.innerWidth <= 480;
+
+    // Clear existing sources to avoid duplication
+    bgVideo.innerHTML = '';
+
+    // Add device-specific video source
+    const videoSource = document.createElement('source');
+    videoSource.type = 'video/mp4';
+    videoSource.src = isMobile 
+      ? 'Cigale App Mobile Video.mp4' 
+      : 'Cigale App Web Video.mp4';
+    bgVideo.appendChild(videoSource);
+
     // Update copyright year
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // Waitlist Form Logic
     const form = document.getElementById('waitlist');
     const emailInput = document.getElementById('email');
     const button = form.querySelector('button');
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const email = emailInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
 
-      // Basic email validation
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      // Validate email
+      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+      if (!isValid) {
         emailInput.focus();
+        emailInput.style.borderColor = '#ff4444'; // Subtle red alert
+        setTimeout(() => { emailInput.style.borderColor = 'rgba(255, 255, 255, 0.2)'; }, 500);
         return;
       }
 
-      // Email existence check
+      // Check for duplicates
       try {
         const existing = JSON.parse(localStorage.getItem('cigale_waitlist') || '[]');
-        const isExisting = existing.some(item => item.email.toLowerCase() === email.toLowerCase());
-
-        if (isExisting) {
-          button.textContent = 'Already in!';
+        if (existing.some(item => item.email === email)) {
           button.disabled = true;
+          button.textContent = 'Already Joined!';
           setTimeout(() => {
             button.disabled = false;
             button.textContent = 'JOIN THE WAITLIST';
@@ -249,31 +288,31 @@
           return;
         }
 
-        // Loading state during submission
+        // Loading state
         button.disabled = true;
         button.textContent = 'Joining...';
 
-        // Simulate an API call delay for demonstration
+        // Simulate API delay (replace with actual fetch)
         setTimeout(() => {
           existing.push({ email, ts: new Date().toISOString() });
           localStorage.setItem('cigale_waitlist', JSON.stringify(existing));
-
+          
           // Success state
-          button.textContent = 'You’re in!';
+          button.textContent = 'You’re In! 🎉';
           emailInput.value = '';
-
-          // Reset button after delay
+          
+          // Reset button after 2s
           setTimeout(() => {
             button.disabled = false;
-            // Uncomment to reset button text after delay
-            // button.textContent = 'JOIN THE WAITLIST';
-          }, 1500);
-        }, 800); // Simulate API response time
+            button.textContent = 'JOIN THE WAITLIST';
+          }, 2000);
+        }, 800);
 
       } catch (error) {
         console.error('Storage error:', error);
-        button.textContent = 'JOIN THE WAITLIST';
+        button.textContent = 'Try Again';
         button.disabled = false;
+        emailInput.value = '';
       }
     });
   </script>
