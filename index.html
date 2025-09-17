@@ -1,60 +1,221 @@
 <!doctype html>
-<link rel="icon" type="image/png" sizes="32x32" href="CigaleIcon.png">
-<link rel="icon" type="image/png" sizes="16x16" href="CigaleIcon.png">
 <html lang="en-GB">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <title>Cigale — Coming Soon</title>
   <meta name="description" content="Cigale is the booking marketplace for live entertainment." />
   <meta name="theme-color" content="#8e0e62" />
-  <link rel="icon" href="CigaleIcon.png" />
+  
+  <!-- Favicon (consolidated) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="CigaleIcon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="CigaleIcon.png">
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root { --brand:#8e0e62; --ink:#fff; --bg:#000; }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background: var(--bg); color:var(--ink); display:flex; flex-direction:column; align-items:center; justify-content:center;
-      min-height:100vh; text-align:center;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      position:relative;
+    :root { 
+      --brand: #8e0e62; 
+      --brand-dark: #6e0b4b; 
+      --ink: #fff; 
+      --background: #000; 
     }
 
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--background);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
+      overflow-x: hidden; /* Prevents unintended horizontal scrolling */
+    }
+
+    /* Background Video (Improved Mobile Handling) */
     #bg-video {
       position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100%;
-      min-height: 100%;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       object-fit: cover;
       z-index: -1;
-      filter: brightness(0.65);
+      filter: brightness(0.7); /* Slightly brighter than original for better video presence */
+      poster: "video-poster.jpg"; /* Add a poster frame (replace with actual image path) */
     }
 
-    .logo{width:160px; height:auto; display:block; margin:0 auto 32px;}
-    h1{
-      margin:0 0 28px;
-      font-weight:700;
-      font-size:clamp(1.5rem, 4vw, 2.8rem);
-      color:#fff;
-      letter-spacing:-0.01em;
-      line-height:1.2;
+    /* Overlay for Better Text Readability */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+      z-index: -0.5; /* Between video and content */
+      pointer-events: none;
     }
 
-    form{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; width:min(480px,90%); margin:0 auto 20px}
-    input[type=email]{flex:1; min-width:200px; height:48px; padding:0 14px; border-radius:12px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:1rem;}
-    input::placeholder{color:rgba(255,255,255,.5)}
-    button{height:48px; padding:0 20px; border:0; border-radius:12px; background:var(--brand); color:#fff; font-weight:600; font-size:1rem; cursor:pointer; transition:background .2s ease}
-    button:hover{background:#6e0b4b}
+    /* Content Container with Animation */
+    .content-container {
+      z-index: 1;
+      max-width: 600px;
+      padding: 2rem 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
 
-    footer{margin-top:40px; font-size:.85rem; color:rgba(255,255,255,.5)}
+    /* Logo */
+    .logo {
+      width: clamp(120px, 160px, 160px); /* Responsive sizing: 120px mobile, 160px desktop */
+      height: auto;
+      display: block;
+      margin: 0 auto 32px;
+      transition: transform 0.2s ease;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
 
-    @media(max-width:480px){
-      h1{font-size:1.5rem;}
-      .logo{width:120px;}
+    .logo:hover {
+      transform: scale(1.03);
+    }
+
+    /* Headline */
+    h1 {
+      margin: 0 0 28px;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 4vw, 2.8rem);
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Waitlist Form */
+    #waitlist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      width: min(480px, 90%);
+      margin: 0 auto 20px;
+    }
+
+    #waitlist input[type="email"] {
+      flex: 1 1 100%; /* Full width on small screens */
+      min-width: 200px; /* Minimum width for larger screens */
+      height: 48px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ink);
+      font-size: 1rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    #waitlist input[type="email"]::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    #waitlist input[type="email"]:focus {
+      outline: none;
+      border-color: var(--brand);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* CTA Button */
+    #waitlist button {
+      height: 48px;
+      padding: 0 20px;
+      border-radius: 12px;
+      background: var(--brand);
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #waitlist button:hover {
+      background: var(--brand-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    #waitlist button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #waitlist button:hover:not(:disabled), #waitlist button:focus:not(:disabled) {
+      outline: none;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+
+    footer:hover {
+      opacity: 1;
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 480px) {
+      .content-container {
+        padding: 1.5rem 1rem; /* Reduced padding for smaller screens */
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        line-height: 1.4;
+        margin-bottom: 24px;
+      }
+
+      #waitlist {
+        gap: 8px;
+        width: 90%;
+      }
+
+      #waitlist input[type="email"] {
+        min-width: auto; /* Removes minimum width constraint */
+      }
+
+      #waitlist button {
+        padding: 0 16px;
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Fade In Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
@@ -65,32 +226,79 @@
     Your browser does not support the video tag.
   </video>
 
-  <img src="CigaleLogo.png" alt="Cigale logo" class="logo" />
+  <!-- Main Content -->
+  <div class="content-container">
+    <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking Marketplace" class="logo" />
+    
+    <h1>THE EASIEST WAY FOR EVENT PLANNERS TO BOOK ENTERTAINERS</h1>
+    
+    <form id="waitlist" novalidate>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      <button type="submit">JOIN THE WAITLIST</button>
+    </form>
 
-  <h1>THE EASIEST WAY FOR EVENT PLANNERS TO BOOK ENTERTAINERS</h1>
-
-  <form id="waitlist" novalidate>
-    <input type="email" id="email" name="email" placeholder="Enter your email" required />
-    <button type="submit">JOIN THE WAITLIST</button>
-  </form>
-
-  <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
+    <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
+  </div>
 
   <script>
-    document.getElementById('year').textContent=new Date().getFullYear();
-    const form=document.getElementById('waitlist'),email=document.getElementById('email');
-    form.addEventListener('submit',e=>{
+    // Update copyright year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('waitlist');
+    const emailInput = document.getElementById('email');
+    const button = form.querySelector('button');
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const val=email.value.trim();
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)){email.focus();return}
-      try{
-        const k='cigale_waitlist',list=JSON.parse(localStorage.getItem(k)||'[]');
-        list.push({email:val,ts:new Date().toISOString()});
-        localStorage.setItem(k,JSON.stringify(list))
-      }catch{}
-      form.querySelector('button').textContent='You’re in!';
-      email.value=''
-    })
+      const email = emailInput.value.trim();
+
+      // Basic email validation
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        emailInput.focus();
+        return;
+      }
+
+      // Email existence check
+      try {
+        const existing = JSON.parse(localStorage.getItem('cigale_waitlist') || '[]');
+        const isExisting = existing.some(item => item.email.toLowerCase() === email.toLowerCase());
+
+        if (isExisting) {
+          button.textContent = 'Already in!';
+          button.disabled = true;
+          setTimeout(() => {
+            button.disabled = false;
+            button.textContent = 'JOIN THE WAITLIST';
+          }, 1500);
+          emailInput.value = '';
+          return;
+        }
+
+        // Loading state
+        button.disabled = true;
+        button.textContent = 'Joining...';
+
+        // Save to storage
+        existing.push({ email, ts: new Date().toISOString() });
+        localStorage.setItem('cigale_waitlist', JSON.stringify(existing));
+
+        // Success state
+        button.textContent = 'You’re in!';
+        emailInput.value = '';
+
+        // Reset button after delay
+        setTimeout(() => {
+          button.disabled = false;
+          // Optional: Uncomment to reset button text
+          // button.textContent = 'JOIN THE WAITLIST';
+        }, 1500);
+
+      } catch (error) {
+        console.error('Storage error:', error);
+        button.textContent = 'JOIN THE WAITLIST';
+        button.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
