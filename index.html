@@ -7,9 +7,17 @@
   <meta name="description" content="Cigale is the booking marketplace for live entertainment." />
   <meta name="theme-color" content="#8e0e62" />
   
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="CigaleIcon.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="CigaleIcon.png">
+  <!-- Favicon Configuration (Mobile & Desktop) -->
+  <!-- Ensure CigaleLogo.png is square (e.g., 32x32, 16x16) and in PNG format -->
+  <link rel="icon" type="image/png" sizes="16x16" href="CigaleLogo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="CigaleLogo.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="CigaleLogo.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="CigaleLogo.png">
+  <link rel="icon" href="CigaleLogo.png" /> <!-- Fallback for older browsers -->
+
+  <!-- iOS Home Screen Icon (Critical for mobile favicon consistency) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="CigaleLogo.png">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,24 +45,24 @@
       justify-content: center;
       min-height: 100vh;
       overflow-x: hidden;
-      overflow-y: auto; /* Allows smooth scrolling if content exceeds viewport */
-      -webkit-overflow-scrolling: touch; /* iOS smooth scroll */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Background Video Fix (Perfect Mobile Fit) */
+    /* Background Video (Perfect Mobile Fit) */
     #bg-video {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      object-fit: cover; /* Crop to fill viewport */
-      object-position: center; /* Focus on center of video */
+      object-fit: cover;
+      object-position: center;
       z-index: -1;
-      filter: brightness(0.6); /* Softer video */
-      poster: url("video-poster.jpg"); /* Replace with actual poster path */
+      filter: brightness(0.6);
+      poster: url("CigaleLogo.png"); /* Fallback to logo if video fails (replace with actual poster path if needed) */
       background-size: cover;
-      background-image: url("video-poster.jpg"); /* Fallback if video fails */
+      background-image: url("CigaleLogo.png"); /* Fallback background (logo) */
       background-position: center;
       transition: var(--transition);
     }
@@ -62,8 +70,8 @@
     /* Mobile Video Adjustment (Prevent black bars) */
     @media (max-width: 768px) {
       #bg-video {
-        object-fit: contain; /* Show full video if aspect ratio is off (adjust based on your video content) */
-        object-position: bottom; /* Prioritize bottom content (e.g., key visuals) */
+        object-fit: contain; /* Show full video if aspect ratio is off */
+        object-position: bottom; /* Prioritize bottom content */
       }
     }
 
@@ -80,12 +88,12 @@
       animation: fadeInUp 0.6s ease-out forwards;
     }
 
-    /* Logo Link (Premium interaction) */
+    /* Clickable Logo Link */
     .logo-link {
       text-decoration: none;
       cursor: pointer;
-      display: block; /* Ensures the link wraps the image properly */
-      margin-bottom: 2rem; /* Inherit original margin */
+      display: block;
+      margin-bottom: 2rem;
     }
 
     .logo {
@@ -100,7 +108,7 @@
       filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3));
     }
 
-    /* Headline (Mobile-friendly line breaks) */
+    /* Headline (Mobile-friendly readability) */
     h1 {
       font-weight: 700;
       font-size: clamp(1.25rem, 3.5vw, 2.2rem); /* Smaller mobile base */
@@ -108,10 +116,10 @@
       margin-bottom: 1.5rem;
       color: var(--ink);
       text-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-      padding: 0 1rem; /* Prevent text from touching viewport edges */
+      padding: 0 1rem;
     }
 
-    /* Waitlist Form (Premium design) */
+    /* Waitlist Form (Premium mobile layout) */
     #waitlist {
       display: flex;
       flex-wrap: wrap;
@@ -129,7 +137,7 @@
       height: 48px;
       border-radius: 24px;
       border: 2px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.05); /* Softer background */
+      background: rgba(255, 255, 255, 0.05);
       color: var(--ink);
       font-size: 1.1rem;
       font-weight: 500;
@@ -157,23 +165,23 @@
       background: var(--brand);
       color: var(--ink);
       font-weight: 600;
-      font-size: 1.1rem;
+      font-size: clamp(0.95rem, 1vw, 1.1rem);
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
-      box-shadow: 0 4px 12px rgba(var(--brand-rgb), 0.2); /* Brand shadow */
+      box-shadow: 0 4px 12px rgba(calc(var(--brand) * 1), 0.2); /* Brand shadow */
       transform: scale(1);
     }
 
     #waitlist button:hover {
       background: var(--brand-dark);
       transform: scale(0.98);
-      box-shadow: 0 6px 16px rgba(var(--brand-rgb), 0.25);
+      box-shadow: 0 6px 16px rgba(calc(var(--brand) * 1), 0.25);
     }
 
     #waitlist button:active {
       transform: scale(0.96);
-      box-shadow: 0 2px 8px rgba(var(--brand-rgb), 0.2);
+      box-shadow: 0 2px 8px rgba(calc(var(--brand) * 1), 0.2);
     }
 
     #waitlist button:disabled {
@@ -229,7 +237,7 @@
 
       #waitlist button {
         padding: 0 1.5rem;
-        font-size: 1rem;
+        font-size: clamp(0.9rem, 1vw, 1rem);
       }
     }
   </style>
@@ -242,7 +250,7 @@
     loop 
     playsinline 
     id="bg-video"
-    poster="video-poster.jpg" <!-- Fallback image (replace with actual path) -->
+    poster="CigaleLogo.png" <!-- Fallback poster (uses logo if no poster frame) -->
   >
     <source src="Cigale Web Video.mp4" type="video/mp4">
     Your browser does not support the video tag.
@@ -252,7 +260,7 @@
   <div class="content-container">
     <!-- Clickable Logo Link -->
     <a href="https://www.linkedin.com/company/cigaleapp" class="logo-link" target="_blank" rel="noopener noreferrer">
-      <img src="CigaleLogo.png" alt="Cigale logo" class="logo" />
+      <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking Marketplace" class="logo" />
     </a>
     
     <h1>The Easiest Way for Event Planners to Book Entertainers</h1>
@@ -312,7 +320,7 @@
         button.disabled = true;
         button.textContent = 'Joining...';
         button.style.transform = 'scale(0.96)';
-        emailInput.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(142, 14, 98, 0.1)'; // Match focus state during load
+        emailInput.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(142, 14, 98, 0.1)';
 
         // Simulate API delay (replace with real fetch)
         setTimeout(() => {
@@ -321,7 +329,6 @@
           
           // Success state
           button.textContent = 'You’re In! 🎉';
-          emailInput.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.1)'; // Reset input shadow
           emailInput.value = '';
           
           // Reset button after 2s
@@ -330,6 +337,7 @@
             button.textContent = 'Join Waitlist →';
             button.style.transform = 'scale(1)';
             button.style.boxShadow = '0 4px 12px rgba(142, 14, 98, 0.2)';
+            emailInput.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.1)';
           }, 2000);
         }, 800);
 
