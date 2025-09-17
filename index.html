@@ -7,17 +7,9 @@
   <meta name="description" content="Cigale is the booking marketplace for live entertainment." />
   <meta name="theme-color" content="#8e0e62" />
   
-  <!-- Favicon Configuration (Mobile & Desktop) -->
-  <!-- Ensure CigaleLogo.png is square (e.g., 32x32, 16x16) and in PNG format -->
-  <link rel="icon" type="image/png" sizes="16x16" href="CigaleLogo.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="CigaleLogo.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="CigaleLogo.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="CigaleLogo.png">
-  <link rel="icon" href="CigaleLogo.png" /> <!-- Fallback for older browsers -->
-
-  <!-- iOS Home Screen Icon (Critical for mobile favicon consistency) -->
-  <link rel="apple-touch-icon" sizes="180x180" href="CigaleLogo.png">
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="CigaleIcon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="CigaleIcon.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,33 +37,34 @@
       justify-content: center;
       min-height: 100vh;
       overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow-y: auto; /* Allows smooth scrolling if content exceeds viewport */
+      -webkit-overflow-scrolling: touch; /* iOS smooth scroll */
     }
 
-    /* Background Video (Perfect Mobile Fit) */
+    /* Background Video Fix (Perfect Mobile Fit) */
     #bg-video {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      object-fit: cover;
-      object-position: center;
+      object-fit: cover; /* Crop to fill viewport */
+      object-position: center; /* Focus on center of video */
       z-index: -1;
-      filter: brightness(0.6);
-      poster: url("CigaleLogo.png"); /* Fallback to logo if video fails (replace with actual poster path if needed) */
-      background-size: cover;
-      background-image: url("CigaleLogo.png"); /* Fallback background (logo) */
+      filter: brightness(0.6); /* Softer video */
+      poster: url("video-poster.jpg"); /* Replace with actual poster image path */
+      background-size: cover; /* Fallback if video fails */
+      background-image: url("video-poster.jpg"); /* Fallback background */
       background-position: center;
       transition: var(--transition);
     }
 
-    /* Mobile Video Adjustment (Prevent black bars) */
+    /* Mobile Video Adjustment (Prevent black bars if video aspect ratio differs) */
     @media (max-width: 768px) {
       #bg-video {
-        object-fit: contain; /* Show full video if aspect ratio is off */
-        object-position: bottom; /* Prioritize bottom content */
+        object-fit: contain; /* Show full video if aspect ratio is off (optional) */
+        /* OR keep object-fit: cover but adjust object-position based on video content */
+        object-position: bottom; /* If key content is at the bottom */
       }
     }
 
@@ -88,17 +81,11 @@
       animation: fadeInUp 0.6s ease-out forwards;
     }
 
-    /* Clickable Logo Link */
-    .logo-link {
-      text-decoration: none;
-      cursor: pointer;
-      display: block;
-      margin-bottom: 2rem;
-    }
-
+    /* Logo (Premium polish) */
     .logo {
-      width: clamp(100px, 12vw, 160px); /* Mobile: 100px → Desktop: 160px */
+      width: clamp(100px, 12vw, 160px); /* 100px mobile → 160px desktop */
       height: auto;
+      margin-bottom: 2rem;
       filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
       transition: var(--transition);
     }
@@ -108,7 +95,7 @@
       filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3));
     }
 
-    /* Headline (Mobile-friendly readability) */
+    /* Headline (Mobile-friendly line breaks) */
     h1 {
       font-weight: 700;
       font-size: clamp(1.25rem, 3.5vw, 2.2rem); /* Smaller mobile base */
@@ -116,14 +103,14 @@
       margin-bottom: 1.5rem;
       color: var(--ink);
       text-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-      padding: 0 1rem;
+      padding: 0 1rem; /* Prevent text from touching viewport edges */
     }
 
     /* Waitlist Form (Premium mobile layout) */
     #waitlist {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.75rem; /* Tighter gap for mobile */
       justify-content: center;
       width: 100%;
       max-width: 480px;
@@ -132,32 +119,32 @@
 
     #waitlist input[type="email"] {
       flex: 1;
-      min-width: 180px;
+      min-width: 180px; /* Smaller min-width for mobile */
       padding: 0 14px;
       height: 48px;
-      border-radius: 24px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.05);
+      border-radius: 24px; /* Rounded corners for modern look */
+      border: 2px solid rgba(255, 255, 255, 0.1); /* Slightly thicker border */
+      background: rgb(255 255 255 / 5%); /* More subtle background */
       color: var(--ink);
       font-size: 1.1rem;
       font-weight: 500;
       transition: var(--transition);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
     }
 
     #waitlist input[type="email"]::placeholder {
-      color: rgba(255, 255, 255, 0.4);
+      color: rgba(255, 255, 255, 0.4); /* Softer placeholder */
       font-weight: 400;
     }
 
     #waitlist input[type="email"]:focus {
       outline: none;
-      border-color: var(--brand);
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(142, 14, 98, 0.1);
+      border-color: var(--brand); /* Brand color on focus */
+      background: rgb(255 255 255 / 10%); /* Brighter background */
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(142, 14, 98, 0.1); /* Glow effect */
     }
 
-    /* CTA Button (Premium interaction) */
+    /* CTA Button (Premium mobile interaction) */
     #waitlist button {
       padding: 0 2rem;
       height: 48px;
@@ -165,23 +152,23 @@
       background: var(--brand);
       color: var(--ink);
       font-weight: 600;
-      font-size: clamp(0.95rem, 1vw, 1.1rem);
+      font-size: 1.1rem;
       font-family: inherit;
       cursor: pointer;
       transition: var(--transition);
-      box-shadow: 0 4px 12px rgba(calc(var(--brand) * 1), 0.2); /* Brand shadow */
-      transform: scale(1);
+      box-shadow: 0 4px 12px rgba(142, 14, 98, 0.2); /* Brand-colored shadow */
+      transform: scale(1); /* Initial scale for hover effect */
     }
 
     #waitlist button:hover {
       background: var(--brand-dark);
-      transform: scale(0.98);
-      box-shadow: 0 6px 16px rgba(calc(var(--brand) * 1), 0.25);
+      transform: scale(0.98); /* Slight shrink for depth */
+      box-shadow: 0 6px 16px rgba(142, 14, 98, 0.25);
     }
 
     #waitlist button:active {
-      transform: scale(0.96);
-      box-shadow: 0 2px 8px rgba(calc(var(--brand) * 1), 0.2);
+      transform: scale(0.96); /* Deeper press effect */
+      box-shadow: 0 2px 8px rgba(142, 14, 98, 0.2);
     }
 
     #waitlist button:disabled {
@@ -189,13 +176,13 @@
       cursor: not-allowed;
     }
 
-    /* Footer (Clean mobile appearance) */
+    /* Footer (Cleaner mobile appearance) */
     footer {
-      margin-top: auto;
+      margin-top: auto; /* Stick to bottom (mobile-friendly) */
       font-size: 0.9rem;
       color: rgba(255, 255, 255, 0.4);
       padding: 1rem 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator */
       transition: var(--transition);
     }
 
@@ -218,39 +205,39 @@
     /* Mobile-Only Fixes */
     @media (max-width: 480px) {
       .content-container {
-        padding: 1.5rem 1rem;
+        padding: 1.5rem 1rem; /* Reduced padding */
       }
 
       h1 {
-        font-size: clamp(1.1rem, 3vw, 1.4rem);
+        font-size: clamp(1.1rem, 3vw, 1.4rem); /* Even smaller for tiny screens */
         line-height: 1.5;
       }
 
       #waitlist {
-        gap: 0.5rem;
+        gap: 0.5rem; /* Tighter gap */
       }
 
       #waitlist input[type="email"] {
-        min-width: 150px;
+        min-width: 150px; /* Smaller min-width */
         font-size: 1rem;
       }
 
       #waitlist button {
-        padding: 0 1.5rem;
-        font-size: clamp(0.9rem, 1vw, 1rem);
+        padding: 0 1.5rem; /* Smaller padding */
+        font-size: 1rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Background Video -->
+  <!-- Background Video (Critical for mobile fit) -->
   <video 
     autoplay 
     muted 
     loop 
     playsinline 
     id="bg-video"
-    poster="CigaleLogo.png" <!-- Fallback poster (uses logo if no poster frame) -->
+    poster="video-poster.jpg" <!-- Fallback image (replace with actual path) -->
   >
     <source src="Cigale Web Video.mp4" type="video/mp4">
     Your browser does not support the video tag.
@@ -258,10 +245,7 @@
 
   <!-- Main Content -->
   <div class="content-container">
-    <!-- Clickable Logo Link -->
-    <a href="https://www.linkedin.com/company/cigaleapp" class="logo-link" target="_blank" rel="noopener noreferrer">
-      <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking Marketplace" class="logo" />
-    </a>
+    <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking" class="logo" />
     
     <h1>The Easiest Way for Event Planners to Book Entertainers</h1>
     
@@ -274,7 +258,7 @@
         required 
         aria-label="Join waitlist email"
       />
-      <button type="submit">Join Waitlist →</button>
+      <button type="submit">Join Waitlist →</button> <!-- Added arrow for clearer CTA -->
     </form>
 
     <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
@@ -297,7 +281,7 @@
       const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
       if (!isValid) {
         emailInput.focus();
-        emailInput.style.borderColor = '#ff4444'; // Subtle red alert on invalid
+        emailInput.style.borderColor = '#ff0000'; // Red border on invalid
         setTimeout(() => { emailInput.style.borderColor = 'rgba(255, 255, 255, 0.1)'; }, 500);
         return;
       }
@@ -319,25 +303,23 @@
         // Loading state
         button.disabled = true;
         button.textContent = 'Joining...';
-        button.style.transform = 'scale(0.96)';
-        emailInput.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(142, 14, 98, 0.1)';
+        button.style.transform = 'scale(0.96)'; // Match active state during load
 
-        // Simulate API delay (replace with real fetch)
+        // Simulate API delay (replace with actual fetch)
         setTimeout(() => {
           existing.push({ email, ts: new Date().toISOString() });
           localStorage.setItem('cigale_waitlist', JSON.stringify(existing));
           
           // Success state
           button.textContent = 'You’re In! 🎉';
+          button.style.boxShadow = '0 4px 12px rgba(110, 11, 107, 0.3)';
           emailInput.value = '';
           
-          // Reset button after 2s
+          // Reset after 2s
           setTimeout(() => {
             button.disabled = false;
             button.textContent = 'Join Waitlist →';
-            button.style.transform = 'scale(1)';
             button.style.boxShadow = '0 4px 12px rgba(142, 14, 98, 0.2)';
-            emailInput.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.1)';
           }, 2000);
         }, 800);
 
