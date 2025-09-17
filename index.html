@@ -32,31 +32,25 @@
       font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--background);
       color: var(--ink);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       position: relative;
       overflow-x: hidden; /* Prevents unintended horizontal scrolling */
     }
 
-    /* Background Video (Improved Mobile Handling) */
+    /* Background Video with perfect fit on mobile */
     #bg-video {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
       height: 100vh;
+      width: auto;
+      max-width: 100vw;
       object-fit: cover;
       z-index: -1;
-      filter: brightness(0.7); /* Slightly brighter than original for better video presence */
-      poster: "video-poster.jpg"; /* Add a poster frame (replace with actual image path) */
+      filter: brightness(0.7);
+      poster: "video-poster.jpg";
     }
 
-    /* Overlay for Better Text Readability */
+    /* Overlay */
     body::before {
       content: "";
       position: fixed;
@@ -64,27 +58,29 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
-      z-index: -0.5; /* Between video and content */
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+      z-index: -0.5; /* Ensure content is on top of video */
       pointer-events: none;
     }
 
-    /* Content Container with Animation */
+    /* Main Content Container */
     .content-container {
-      z-index: 1;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
       max-width: 600px;
-      padding: 2rem 1.5rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.6s ease-out forwards;
+      text-align: center;
     }
 
     /* Logo */
     .logo {
-      width: clamp(120px, 160px, 160px); /* Responsive sizing: 120px mobile, 160px desktop */
+      width: 100%;
+      max-width: 160px;
       height: auto;
       display: block;
-      margin: 0 auto 32px;
+      margin-bottom: 32px;
       transition: transform 0.2s ease;
       filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     }
@@ -102,21 +98,23 @@
       letter-spacing: -0.01em;
       line-height: 1.2;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+      padding-bottom: 16px;
     }
 
     /* Waitlist Form */
     #waitlist {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 8px;
       justify-content: center;
       width: min(480px, 90%);
-      margin: 0 auto 20px;
+      margin-bottom: 20px;
     }
 
     #waitlist input[type="email"] {
-      flex: 1 1 100%; /* Full width on small screens */
-      min-width: 200px; /* Minimum width for larger screens */
+      flex: 1;
+      min-width: 200px;
       height: 48px;
       padding: 0 14px;
       border-radius: 12px;
@@ -145,7 +143,7 @@
       background: var(--brand);
       color: var(--ink);
       font-weight: 600;
-      font-size: 1rem;
+      font-size: clamp(0.95rem, 1vw, 1rem); /* Responsive font size for button */
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -171,50 +169,27 @@
       margin-top: 40px;
       font-size: 0.85rem;
       color: rgba(255, 255, 255, 0.5);
-      opacity: 0.8;
-      transition: opacity 0.2s ease;
-    }
-
-    footer:hover {
-      opacity: 1;
     }
 
     /* Mobile Adjustments */
     @media (max-width: 480px) {
-      .content-container {
-        padding: 1.5rem 1rem; /* Reduced padding for smaller screens */
-      }
-
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         line-height: 1.4;
         margin-bottom: 24px;
       }
 
       #waitlist {
-        gap: 8px;
-        width: 90%;
+        gap: 4px;
+        width: 100%;
       }
 
       #waitlist input[type="email"] {
-        min-width: auto; /* Removes minimum width constraint */
+        min-width: auto;
       }
 
       #waitlist button {
         padding: 0 16px;
-        font-size: 0.95rem;
-      }
-    }
-
-    /* Fade In Animation */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
       }
     }
   </style>
@@ -226,7 +201,7 @@
     Your browser does not support the video tag.
   </video>
 
-  <!-- Main Content -->
+  <!-- Main Content Container -->
   <div class="content-container">
     <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking Marketplace" class="logo" />
     
@@ -274,24 +249,26 @@
           return;
         }
 
-        // Loading state
+        // Loading state during submission
         button.disabled = true;
         button.textContent = 'Joining...';
 
-        // Save to storage
-        existing.push({ email, ts: new Date().toISOString() });
-        localStorage.setItem('cigale_waitlist', JSON.stringify(existing));
-
-        // Success state
-        button.textContent = 'You’re in!';
-        emailInput.value = '';
-
-        // Reset button after delay
+        // Simulate an API call delay for demonstration
         setTimeout(() => {
-          button.disabled = false;
-          // Optional: Uncomment to reset button text
-          // button.textContent = 'JOIN THE WAITLIST';
-        }, 1500);
+          existing.push({ email, ts: new Date().toISOString() });
+          localStorage.setItem('cigale_waitlist', JSON.stringify(existing));
+
+          // Success state
+          button.textContent = 'You’re in!';
+          emailInput.value = '';
+
+          // Reset button after delay
+          setTimeout(() => {
+            button.disabled = false;
+            // Uncomment to reset button text after delay
+            // button.textContent = 'JOIN THE WAITLIST';
+          }, 1500);
+        }, 800); // Simulate API response time
 
       } catch (error) {
         console.error('Storage error:', error);
