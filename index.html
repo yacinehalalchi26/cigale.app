@@ -19,16 +19,9 @@
 </head>
 <body>
   <!-- Background Video -->
-  <video
-    autoplay
-    muted
-    loop
-    playsinline
-    id="bg-video"
-    poster="CigaleIcon.png">
-  </video>
+  <video autoplay muted loop playsinline id="bg-video" poster="CigaleIcon.png"></video>
 
-  <!-- Fixed top logo (always visible) -->
+  <!-- Top Left Logo -->
   <header class="topbar">
     <a href="https://www.linkedin.com/company/cigaleapp" class="logo-link" target="_blank" rel="noopener noreferrer">
       <img src="CigaleLogo.png" alt="Cigale" class="logo" />
@@ -55,10 +48,9 @@
   </div>
 
   <script>
-    // Dynamic video source (mobile vs web)
+    // Video source logic
     const bgVideo = document.getElementById('bg-video');
     const isMobile = window.innerWidth <= 414;
-
     bgVideo.innerHTML = '';
     const source = document.createElement('source');
     source.type = 'video/mp4';
@@ -68,7 +60,7 @@
     // Copyright year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Form handling
+    // Form (local placeholder logic, replace with API later if needed)
     const form = document.getElementById('waitlist');
     const nameInput = document.getElementById('name');
     const emailInput = document.getElementById('email');
@@ -82,7 +74,7 @@
       if (!name) {
         nameInput.focus();
         nameInput.style.borderColor = '#ff4444';
-        setTimeout(() => { nameInput.style.borderColor = 'rgba(255, 255, 255, 0.1)'; }, 500);
+        setTimeout(() => nameInput.style.borderColor = 'rgba(255,255,255,0.1)', 500);
         return;
       }
 
@@ -90,53 +82,25 @@
       if (!isValidEmail) {
         emailInput.focus();
         emailInput.style.borderColor = '#ff4444';
-        setTimeout(() => { emailInput.style.borderColor = 'rgba(255, 255, 255, 0.1)'; }, 500);
+        setTimeout(() => emailInput.style.borderColor = 'rgba(255,255,255,0.1)', 500);
         return;
       }
 
-      try {
-        const existing = JSON.parse(localStorage.getItem('cigale_waitlist') || '[]');
-        const isExisting = existing.some(item => item.email === email);
-        if (isExisting) {
-          button.disabled = true;
-          button.textContent = 'Already Joined!';
-          setTimeout(() => {
-            button.disabled = false;
-            button.textContent = 'JOIN THE WAITLIST';
-          }, 1500);
-          nameInput.value = '';
-          emailInput.value = '';
-          return;
-        }
+      button.disabled = true;
+      button.textContent = 'Joining...';
 
-        button.disabled = true;
-        button.textContent = 'Joining...';
-        nameInput.style.boxShadow = 'inset 0 2px 8px rgba(0, 0, 0, 0.1)';
-        emailInput.style.boxShadow = 'inset 0 2px 8px rgba(0, 0, 0, 0.1)';
-
-        setTimeout(() => {
-          existing.push({ email, name, ts: new Date().toISOString() });
-          localStorage.setItem('cigale_waitlist', JSON.stringify(existing));
-          button.textContent = 'You’re In! 🎉';
-          nameInput.value = '';
-          emailInput.value = '';
-          setTimeout(() => {
-            button.disabled = false;
-            button.textContent = 'JOIN THE WAITLIST';
-            nameInput.style.boxShadow = 'inset 0 2px 8px rgba(0, 0, 0, 0.1)';
-            emailInput.style.boxShadow = 'inset 0 2px 8px rgba(0, 0, 0, 0.1)';
-          }, 2000);
-        }, 800);
-      } catch (error) {
-        console.error('Storage error:', error);
-        button.textContent = 'Try Again';
-        button.disabled = false;
+      setTimeout(() => {
+        button.textContent = 'You’re In! 🎉';
         nameInput.value = '';
         emailInput.value = '';
-      }
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = 'JOIN THE WAITLIST';
+        }, 2000);
+      }, 800);
     });
 
-    // Keep video sized to viewport
+    // Keep video full screen
     const sizeVideo = () => {
       bgVideo.style.width = '100vw';
       bgVideo.style.height = '100vh';
@@ -153,22 +117,10 @@
       --transition: all 0.3s ease;
     }
 
-    /* Reset + remove any scrollbars that could show as a vertical line */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; }             /* <-- no page scrollbars */
-    *::-webkit-scrollbar { width: 0; height: 0; }              /* <-- hide inner element bars (Safari/Chrome) */
-    * { scrollbar-width: none; }                                /* <-- hide inner bars (Firefox) */
+    html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; color: var(--ink); }
 
-    body {
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      color: var(--ink);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-    }
-
-    /* Background video */
+    /* Background Video */
     #bg-video {
       position: fixed;
       inset: 0;
@@ -181,55 +133,43 @@
       pointer-events: none;
     }
 
-    /* Top logo bar */
+    /* Top Left Logo */
     .topbar {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      padding: 20px 16px;
-      z-index: 3; /* above everything */
+      padding: 20px 24px;
+      z-index: 5;
     }
-
-    .logo-link { display: inline-block; text-decoration: none; }
     .logo {
-      display: block;
-      width: clamp(140px, 16vw, 220px);   /* desktop: bigger */
+      width: clamp(120px, 12vw, 180px);
       height: auto;
       filter: drop-shadow(0 6px 16px rgba(0,0,0,0.35));
-      transition: transform .2s ease;
     }
-    .logo:hover { transform: scale(1.04); }
 
-    /* Main content */
+    /* Content centered */
     .content-container {
       position: relative;
       z-index: 2;
       width: 90%;
       max-width: 640px;
-      padding: 6.5rem 2rem 4rem;  /* top padding leaves room under fixed logo */
+      margin: 0 auto;
+      padding-top: 7rem; /* leaves room under logo */
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.6s ease-out forwards;
+      text-align: center;
     }
 
-    .headline-container { text-align: center; max-width: 100%; }
-
+    /* Headline */
     h1 {
       font-weight: 700;
-      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-size: clamp(1.8rem, 4vw, 2.6rem); /* responsive, max two lines */
+      line-height: 1.3;
       text-transform: uppercase;
-      letter-spacing: -0.02em;
-      line-height: 1.4;
-      color: var(--ink);
-      padding: 0 1rem;
-      margin: 0;
+      max-width: 90%;
+      margin: 0 auto;
     }
 
     .headline-line {
@@ -238,10 +178,9 @@
       animation: headlineSlideIn 0.8s ease-out forwards;
     }
     .headline-line:nth-child(2) { animation-delay: 0.2s; }
-
     @keyframes headlineSlideIn {
       from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Form */
@@ -258,17 +197,14 @@
       border: 1px solid rgba(255,255,255,0.1);
       background: rgba(255,255,255,0.08);
       color: var(--ink);
-      font-size: clamp(1.1rem, 1.2vw, 1.2rem);
+      font-size: 1.1rem;
       font-weight: 500;
-      transition: var(--transition);
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
     }
     .form-input::placeholder { color: rgba(255,255,255,0.4); }
     .form-input:focus {
       outline: none;
       border-color: var(--brand);
       background: rgba(255,255,255,0.1);
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.1), 0 0 0 5px rgba(142,14,98,0.12);
     }
 
     #waitlist button {
@@ -278,37 +214,15 @@
       background: var(--brand);
       color: var(--ink);
       font-weight: 600;
-      font-size: clamp(1rem, 1vw, 1.1rem);
+      font-size: 1rem;
       cursor: pointer;
-      transition: var(--transition);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border: 0;
+      border: none;
     }
-    #waitlist button:hover {
-      background: var(--brand-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-    }
-    #waitlist button:active { transform: translateY(0); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    #waitlist button:hover { background: var(--brand-dark); }
 
-    /* Desktop tweaks */
-    @media (min-width: 768px) {
-      .content-container { padding: 7.5rem 3rem 5rem; }
-      .form-input { height: 56px; padding: 0 18px; font-size: 1.1rem; }
-      #waitlist { gap: 2rem; }
-      #waitlist button { height: 56px; padding: 0 2rem; }
-      h1 { font-size: clamp(2.25rem, 4vw, 3rem); }
-    }
-
-    /* Phone: keep layout the same, just bump logo slightly */
-    @media (max-width: 414px) {
-      .logo { width: clamp(150px, 44vw, 180px); } /* a bit bigger on phones */
-    }
-
-    /* Fade-in */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
+    footer {
+      font-size: 0.85rem;
+      opacity: 0.8;
     }
   </style>
 </body>
