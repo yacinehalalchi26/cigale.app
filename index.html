@@ -11,38 +11,39 @@
   <link rel="icon" type="image/png" sizes="32x32" href="CigaleIcon.png">
   <link rel="icon" type="image/png" sizes="16x16" href="CigaleIcon.png">
   
-  <!-- iOS Home Screen Icon (Critical for mobile consistency) -->
+  <!-- iOS Home Screen Icon -->
   <link rel="apple-touch-icon" sizes="180x180" href="CigaleLogo.png">
   <meta name="apple-mobile-web-app-capable" content="yes" />
 
-  <!-- Fonts (Apple San Francisco-inspired) -->
+  <!-- Fonts (San Francisco-inspired) -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Background Video (Web & Mobile) -->
+  <!-- Background Video -->
   <video 
     autoplay 
     muted 
     loop 
     playsinline 
     id="bg-video" 
-    poster="CigaleLogo.png" <!-- Fallback to logo if video fails (replace with actual poster path) -->
+    poster="video-poster.jpg" <!-- Replace with non-black poster -->
   >
-    <!-- Sources loaded dynamically via JavaScript -->
   </video>
 
-  <!-- Main Content Container (Centered, Apple-style) -->
+  <!-- Main Content -->
   <div class="content-container">
-    <!-- Clickable Logo (LinkedIn Link) -->
     <a href="https://www.linkedin.com/company/cigaleapp" class="logo-link" target="_blank" rel="noopener noreferrer">
-      <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking Marketplace" class="logo" />
+      <img src="CigaleLogo.png" alt="Cigale - Live Entertainment Booking" class="logo" />
     </a>
     
-    <!-- Hero Headline (All-caps, Apple typography) -->
-    <h1>THE EASIEST WAY FOR EVENT PLANNERS TO BOOK ENTERTAINERS</h1>
+    <!-- Animated Hero Headline -->
+    <div class="headline-container">
+      <h1>THE EASIEST WAY<br>FOR EVENT PLANNERS TO BOOK ENTERTAINERS</h1>
+      <div class="note-animation"></div> <!-- Visual element for musical notes effect -->
+    </div>
     
-    <!-- Waitlist Form (iOS App-like simplicity) -->
+    <!-- Waitlist Form (Email bigger than button) -->
     <form id="waitlist" novalidate>
       <input type="email" id="email" name="email" placeholder="Enter your email" required />
       <button type="submit">JOIN THE WAITLIST</button>
@@ -51,25 +52,22 @@
   </div>
 
   <script>
-    // Dynamically load device-specific video source
+    // Dynamic video loading (mobile vs web)
     const bgVideo = document.getElementById('bg-video');
-    const isMobile = window.innerWidth <= 414; // Target iPhone screen width
+    const isMobile = window.innerWidth <= 414;
 
-    // Clear existing sources to avoid duplication
     bgVideo.innerHTML = '';
-
-    // Add video source based on device
     const videoSource = document.createElement('source');
     videoSource.type = 'video/mp4';
     videoSource.src = isMobile 
       ? 'Cigale App Mobile Video.mp4' 
-      : 'Cigale App Web Video.mp4'; // Ensure web video path is correct
+      : 'Cigale App Web Video.mp4';
     bgVideo.appendChild(videoSource);
 
-    // Update copyright year
+    // Update year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Waitlist Form Logic
+    // Form submission logic
     const form = document.getElementById('waitlist');
     const emailInput = document.getElementById('email');
     const button = form.querySelector('button');
@@ -78,16 +76,16 @@
       e.preventDefault();
       const email = emailInput.value.trim().toLowerCase();
 
-      // Validate email format
+      // Validate email
       const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
       if (!isValid) {
         emailInput.focus();
-        emailInput.style.borderColor = '#ff4444'; // Subtle error highlight
-        setTimeout(() => { emailInput.style.borderColor = 'rgba(255, 255, 255, 0.1)'; }, 500);
+        emailInput.style.borderColor = '#ff4444';
+        setTimeout(() => { emailInput.style.borderColor = 'rgba(255, 255, 255, 0.2)'; }, 500);
         return;
       }
 
-      // Check for existing emails
+      // Check duplicates
       try {
         const existing = JSON.parse(localStorage.getItem('cigale_waitlist') || '[]');
         if (existing.some(item => item.email === email)) {
@@ -104,9 +102,9 @@
         // Loading state
         button.disabled = true;
         button.textContent = 'Joining...';
-        emailInput.style.boxShadow = 'inset 0 2px 4px rgba(0, 0, 0, 0.1)';
+        emailInput.style.boxShadow = 'inset 0 2px 6px rgba(0, 0, 0, 0.1)';
 
-        // Simulate API delay (replace with actual fetch)
+        // Simulate API call
         setTimeout(() => {
           existing.push({ email, ts: new Date().toISOString() });
           localStorage.setItem('cigale_waitlist', JSON.stringify(existing));
@@ -115,22 +113,21 @@
           button.textContent = 'You’re In! 🎉';
           emailInput.value = '';
           
-          // Reset button after 2s
+          // Reset button
           setTimeout(() => {
             button.disabled = false;
             button.textContent = 'JOIN THE WAITLIST';
-            emailInput.style.boxShadow = 'none'; // Reset shadow
+            emailInput.style.boxShadow = 'inset 0 2px 6px rgba(0, 0, 0, 0.1)';
           }, 2000);
         }, 800);
       } catch (error) {
         console.error('Storage error:', error);
         button.textContent = 'Try Again';
         button.disabled = false;
-        emailInput.value = '';
       }
     });
 
-    // Ensure video resizes dynamically (fixes address bar hide/show on mobile)
+    // Video resize on window change
     window.addEventListener('resize', () => {
       const video = document.getElementById('bg-video');
       video.style.width = '100vw';
@@ -144,6 +141,7 @@
       --brand-dark: #6e0b4b; 
       --ink: #fff; 
       --transition: all 0.3s ease;
+      --note-color: #ff6b6b; /* Accent color for notes (adjust to match your brand) */
     }
 
     * { 
@@ -155,176 +153,220 @@
     html, body {
       height: 100%;
       font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: transparent; /* No black background */
+      background: transparent;
       color: var(--ink);
       position: relative;
       overflow-x: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center; /* Center content vertically */
+      justify-content: center;
     }
 
-    /* Background Video: Full viewport coverage */
+    /* Background Video (No black bars) */
     #bg-video {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      object-fit: cover; /* Crop to fill without distortion */
-      object-position: center; /* Focus on center of video */
+      object-fit: cover;
+      object-position: center;
       z-index: -1;
-      filter: brightness(0.7); /* Softer video (adjust as needed) */
-      min-width: 100%; /* Prevent collapse */
-      min-height: 100%; /* Prevent collapse */
+      filter: brightness(0.7);
+      min-width: 100%;
+      min-height: 100%;
     }
 
-    /* Content Container (Centered, Apple-style margins) */
+    /* Content Container (Centered, Apple-style) */
     .content-container {
       position: relative;
       z-index: 2;
-      width: 90%; /* Max 90% width on mobile */
-      max-width: 640px; /* Apple.com-like max content width on desktop */
-      padding: 2rem 1rem; /* iOS app-like padding */
-      text-align: center;
-      gap: 2rem; /* Consistent spacing between elements */
+      width: 90%;
+      max-width: 640px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
       opacity: 0;
       transform: translateY(20px);
       animation: fadeInUp 0.6s ease-out forwards;
     }
 
-    /* Clickable Logo (Premium hover) */
+    /* Logo (Premium interaction) */
     .logo-link {
       text-decoration: none;
       display: block;
-      margin-bottom: 2rem; /* Spacing below logo */
+      margin-bottom: 2rem;
     }
 
     .logo {
-      width: clamp(100px, 12vw, 140px); /* Mobile: 100px → Desktop: 140px */
+      width: clamp(80px, 10vw, 120px); /* Mobile: 80px → Desktop: 120px */
       height: auto;
-      max-width: 100%; /* Prevent overflow */
+      max-width: 100%;
       transition: var(--transition);
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2)); /* Subtle shadow */
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
     }
 
     .logo:hover {
-      transform: scale(1.02); /* Gentle scale-up on hover (Apple-like) */
-      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+      transform: scale(1.03);
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3));
     }
 
-    /* Hero Headline (All-caps, Apple typography) */
+    /* Hero Headline (Perfect fit, musical animation) */
+    .headline-container {
+      position: relative;
+      text-align: center;
+      max-width: 100%; /* Force content within container */
+      margin: 0 auto;
+      gap: 0.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
     h1 {
       font-weight: 700;
-      font-size: clamp(1.5rem, 4vw, 2.5rem); /* Mobile: 1.5rem → Desktop: 2.5rem */
+      font-size: clamp(1.5rem, 4vw, 2.2rem); /* Mobile: 1.5rem → Desktop: 2.2rem */
       text-transform: uppercase;
-      letter-spacing: -0.02em; /* Tighter spacing for capitals */
-      line-height: 1.1; /* Compact line height (Apple style) */
+      letter-spacing: -0.02em;
+      line-height: 1.2; /* Compact for capitals */
       color: var(--ink);
-      padding: 0 1rem; /* Prevent text from touching viewport edges */
+      padding: 0 1rem;
+      animation: none; /* Remove default fade-in (handled by container) */
     }
 
-    /* Waitlist Form (iOS App-like vertical layout on mobile) */
+    h1 br {
+      display: none; /* Hide line break on desktop */
+    }
+
+    @media (max-width: 480px) {
+      h1 br {
+        display: block; /* Show line break on mobile */
+      }
+      h1 {
+        font-size: clamp(1.25rem, 3.5vw, 1.5rem); /* Tighter mobile scaling */
+      }
+    }
+
+    /* Musical Notes Animation (Under headline) */
+    .note-animation {
+      width: 100%;
+      height: 4px; /* Height of animation */
+      background: linear-gradient(90deg, transparent, var(--note-color), transparent);
+      background-size: 200% auto;
+      animation: notesShift 2s linear infinite;
+      opacity: 0.6;
+      margin-top: 8px; /* Space below headline */
+    }
+
+    @keyframes notesShift {
+      0% {
+        background-position: 0% 0%;
+      }
+      50% {
+        background-position: 100% 0%;
+      }
+      100% {
+        background-position: 0% 0%;
+      }
+    }
+
+    /* Waitlist Form (Email bigger than button) */
     #waitlist {
       display: flex;
-      flex-direction: column; /* Stack input/button vertically */
+      flex-direction: column;
       width: 100%;
-      gap: 1rem; /* Vertical spacing */
+      gap: 1rem;
     }
 
     #waitlist input[type="email"] {
-      height: 48px; /* iOS standard button height */
-      padding: 0 16px;
-      border-radius: 12px; /* Rounded corners (Apple style) */
-      border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-      background: rgba(255, 255, 255, 0.06); /* Soft background */
+      height: 56px; /* Larger than button (56px vs 48px) */
+      padding: 0 18px; /* More internal space */
+      border-radius: 16px; /* Rounded corners */
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--ink);
-      font-size: 1rem; /* iOS text size */
+      font-size: 1.1rem; /* Larger text */
       font-weight: 500;
       transition: var(--transition);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
     #waitlist input[type="email"]::placeholder {
-      color: rgba(255, 255, 255, 0.4); /* Faint placeholder */
+      color: rgba(255, 255, 255, 0.4);
     }
 
     #waitlist input[type="email"]:focus {
       outline: none;
-      border-color: var(--brand); /* Brand color highlight */
-      background: rgba(255, 255, 255, 0.1); /* Brighter background */
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(142, 14, 98, 0.1); /* Subtle glow */
+      border-color: var(--brand);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(var(--brand-rgb), 0.1);
     }
 
-    /* CTA Button (iOS App-like interaction) */
     #waitlist button {
-      height: 48px; /* iOS standard height */
-      padding: 0 2rem;
-      border-radius: 12px; /* Rounded corners */
+      height: 48px; /* Smaller than email input */
+      padding: 0 20px;
+      border-radius: 16px;
       background: var(--brand);
       color: var(--ink);
       font-weight: 600;
-      font-size: 1rem; /* Consistent text size */
+      font-size: 1rem; /* Smaller text */
       cursor: pointer;
       transition: var(--transition);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     #waitlist button:hover {
-      background: var(--brand-dark); /* Darker brand on hover */
-      transform: translateY(-1px); /* Slight lift (Apple-like) */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Deeper shadow */
+      background: var(--brand-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     #waitlist button:active {
-      transform: translateY(0); /* Reset on press */
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Softer shadow */
-    }
-
-    #waitlist button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      box-shadow: none; /* Remove shadow when disabled */
-    }
-
-    /* Footer (Apple-style minimal) */
-    footer {
-      margin-top: auto; /* Stick to bottom */
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.4); /* Subtle text */
-      padding: 1.5rem 0; /* Spacing above/below */
-      border-top: 1px solid rgba(255, 255, 255, 0.08); /* Very subtle separator */
+      transform: translateY(0);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     /* Desktop Adjustments (Apple.com Style) */
     @media (min-width: 768px) {
       .content-container {
-        padding: 3rem 2rem; /* More padding on larger screens */
-        width: 80%; /* Slightly narrower on desktop */
+        padding: 3rem 2rem;
+        width: 80%;
       }
 
       #waitlist {
-        flex-direction: row; /* Horizontal layout on desktop */
-        gap: 0.75rem; /* Tighter horizontal gap */
+        flex-direction: row;
+        gap: 0.75rem;
       }
 
       #waitlist input[type="email"] {
-        min-width: 200px; /* Prevent input from shrinking too small */
-        flex: 1; /* Take remaining space */
+        min-width: 200px;
+        flex: 1;
+        height: 52px; /* Slightly smaller on desktop */
+        padding: 0 16px;
+        font-size: 1rem;
       }
 
       #waitlist button {
-        padding: 0 2.5rem; /* More button padding */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Deeper shadow */
+        padding: 0 2rem;
+        height: 52px; /* Match input height on desktop */
       }
 
+      h1 br {
+        display: none; /* Hide line break on desktop */
+      }
       h1 {
-        font-size: clamp(2rem, 4vw, 3rem); /* Larger desktop headline */
+        font-size: clamp(2rem, 4vw, 2.8rem); /* Larger desktop headline */
+      }
+
+      .note-animation {
+        height: 5px; /* Slightly taller on desktop */
+        opacity: 0.7;
       }
     }
 
-    /* Fade In Animation (Smooth entry) */
+    /* Fade In Animation (Content entry) */
     @keyframes fadeInUp {
       from {
         opacity: 0;
