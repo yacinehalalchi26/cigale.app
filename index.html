@@ -53,23 +53,20 @@
       background:#0a0710;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
-      overflow:hidden; /* true splash */
+      overflow-y:auto; /* allow slight scrolling */
     }
 
     /* ===== Background Layer Stack ===== */
     .bg{
       position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none;
     }
-    /* Fallback poster / photo for low-power or when video can't autoplay */
     .bg picture,.bg img{
       position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;
       filter:blur(18px) saturate(1.15) brightness(.9);
       transform:scale(1.03);
     }
-    /* Optional video (auto-disabled for reduced data / motion) */
     #bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:blur(14px) brightness(.85);opacity:.85}
 
-    /* Soft gradient fog + vignette */
     .bg::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
       background:
         radial-gradient(1200px 800px at 15% 20%, rgba(142,14,98,.55), transparent 60%),
@@ -81,7 +78,6 @@
       box-shadow:inset 0 0 220px rgba(0,0,0,.55);
     }
 
-    /* Floating blurred blobs for subtle motion */
     .blob{position:absolute;filter:blur(48px);opacity:.38;border-radius:50%;mix-blend-mode:screen}
     .blob.b1{background:#ff49c873;width:36vmax;height:36vmax;left:-10vmax;top:-10vmax;animation:float 18s ease-in-out infinite}
     .blob.b2{background:#7c3aed66;width:28vmax;height:28vmax;right:-8vmax;bottom:-6vmax;animation:float 22s ease-in-out infinite reverse}
@@ -90,14 +86,14 @@
     /* ===== Top Bar ===== */
     .topbar{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;z-index:10}
     .logo-link{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
-    .logo{width:clamp(120px,12vw,180px);height:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,.35));transition:transform .3s ease}
+    .logo{width:clamp(120px,12vw,180px);height:auto;filter:drop-shadow(0 0 6px rgba(255,255,255,0.9)) drop-shadow(0 8px 18px rgba(0,0,0,.35));transition:transform .3s ease}
     .logo-link:hover .logo{transform:translateY(-2px)}
     .social{display:flex;gap:10px}
     .social a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--glass-border);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:var(--transition)}
     .social a:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
 
     /* ===== Center Content ===== */
-    .wrap{position:relative;z-index:2;display:grid;place-items:center;height:100dvh;padding:120px 18px 48px}
+    .wrap{position:relative;z-index:2;display:grid;place-items:center;min-height:100dvh;padding:120px 18px 120px}
     .card{width:min(680px,92vw);padding:clamp(20px,3.8vw,36px);border-radius:var(--radius);
       background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(14px) saturate(140%);
       -webkit-backdrop-filter:blur(14px) saturate(140%);
@@ -110,7 +106,6 @@
 
     .tagline{display:inline-block;margin:12px 0 26px;padding:6px 12px;border-radius:999px;border:1px solid var(--glass-border);background:rgba(255,255,255,.08);font-size:.85rem;color:var(--ink-dim)}
 
-    /* Form */
     form{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
     .row{display:grid;grid-template-columns:1fr;gap:12px}
     @media (min-width:560px){.row{grid-template-columns:1.2fr 1fr}}
@@ -138,34 +133,28 @@
 
     .note{margin-top:10px;font-size:.82rem;color:var(--ink-dim)}
 
-    /* Submitted state */
     .success{display:grid;gap:10px;place-items:center;text-align:center;padding:22px;border-radius:16px;border:1px solid var(--glass-border);background:rgba(12,10,19,.55)}
     .success h2{margin:6px 0 0;font-size:1.25rem}
 
-    /* Footer */
-    footer{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:16px 14px;color:var(--ink-dim);font-size:.88rem;z-index:3}
+    footer{position:relative;left:0;right:0;margin-top:60px;display:flex;justify-content:center;padding:40px 14px;color:var(--ink-dim);font-size:.88rem;z-index:3}
 
-    /* Motion respect */
     @media (prefers-reduced-motion:reduce){
       *{animation:none!important;transition:none!important}
       #bg-video{display:none!important}
       .blob{display:none}
     }
 
-    /* Nice little entrance */
     .fade-up{opacity:0;transform:translateY(18px);animation:enter .8s ease-out forwards}
     .fade-up.d2{animation-delay:.12s}
     .fade-up.d3{animation-delay:.24s}
     .fade-up.d4{animation-delay:.36s}
     @keyframes enter{to{opacity:1;transform:none}}
 
-    /* Mobile keyboard safe (iOS) */
-    @supports (height: 100dvh){.wrap{height:100dvh}}
+    @supports (height: 100dvh){.wrap{min-height:100dvh}}
   </style>
 </head>
 <body>
   <div class="bg" aria-hidden="true">
-    <!-- Fallback poster image (replace with your blurred high-res still) -->
     <picture>
       <source srcset="CigalePoster.avif" type="image/avif" />
       <source srcset="CigalePoster.webp" type="image/webp" />
@@ -176,7 +165,6 @@
     <span class="blob b2"></span>
   </div>
 
-  <!-- Top Bar -->
   <header class="topbar">
     <a href="https://www.linkedin.com/company/cigaleapp" class="logo-link" target="_blank" rel="noopener noreferrer">
       <img src="CigaleLogo.png" alt="Cigale" class="logo" />
@@ -188,7 +176,6 @@
     </nav>
   </header>
 
-  <!-- Main -->
   <main class="wrap">
     <section class="card fade-up">
       <span class="tagline">COMING SOON</span>
@@ -208,7 +195,6 @@
             <input id="email" name="email" type="email" placeholder="Email address" autocomplete="email" inputmode="email" required />
           </div>
         </div>
-        <!-- Honeypot -->
         <input type="text" name="company" id="company" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button type="submit" id="submit">Join the waitlist</button>
         <p class="note" id="privacy">No spam. Unsubscribe anytime.</p>
@@ -216,86 +202,4 @@
       </form>
 
       <div id="success" class="success" hidden>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.371 0 0 5.371 0 12s5.371 12 12 12 12-5.371 12-12S18.629 0 12 0zm-1.2 17.4l-4.8-4.8 1.692-1.692 3.108 3.108 6.9-6.9 1.692 1.692-8.592 8.592z"/></svg>
-        <h2>You're on the list 🎉</h2>
-        <p class="sub">We'll keep you posted with launch news and early access.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
-
-  <script>
-    document.documentElement.classList.remove('no-js');
-
-    // ===== Dynamic year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // ===== Background video logic with smart fallbacks
-    (function initVideo(){
-      const video = document.getElementById('bg-video');
-      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const saveData = navigator.connection && (navigator.connection.saveData || (navigator.connection.effectiveType||'').includes('2g'));
-      const isSmall = Math.min(window.innerWidth, window.innerHeight) <= 480;
-
-      if(reduceMotion || saveData){
-        // Keep poster only
-        video.parentElement.removeChild(video);
-        return;
-      }
-
-      // Choose source based on viewport
-      const src = isSmall ? 'Cigale App Mobile Video.mp4' : 'Cigale App Web Video.mp4';
-      const source = document.createElement('source');
-      source.type = 'video/mp4';
-      source.src = src;
-      video.appendChild(source);
-
-      // Attempt autoplay; if it fails, remove video (poster stays)
-      video.muted = true; video.playsInline = true; video.loop = true;
-      const playAttempt = video.play();
-      if(playAttempt && typeof playAttempt.then === 'function'){
-        playAttempt.catch(()=>{ try{ video.remove(); }catch(e){} });
-      }
-
-      // Keep full-bleed sizing on resize
-      const sizeVideo = ()=>{ video.style.width='100vw'; video.style.height='100vh'; };
-      window.addEventListener('resize', sizeVideo, {passive:true});
-      sizeVideo();
-    })();
-
-    // ===== Form handling (client-only demo)
-    (function formLogic(){
-      const form = document.getElementById('waitlist');
-      const name = document.getElementById('name');
-      const email = document.getElementById('email');
-      const success = document.getElementById('success');
-      const live = document.getElementById('live');
-
-      // helpers
-      const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-      const mark = (el)=>{ el.style.borderColor = '#ff5a5a'; setTimeout(()=> el.style.borderColor = 'var(--glass-border)', 700); };
-
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const honey = document.getElementById('company');
-        const n = name.value.trim();
-        const m = email.value.trim().toLowerCase();
-
-        if(honey.value) return; // simple bot trap
-        if(!n){ name.focus(); mark(name); return; }
-        if(!emailRE.test(m)){ email.focus(); mark(email); return; }
-
-        // Show success state (swap form)
-        form.hidden = true;
-        success.hidden = false;
-        live.textContent = 'Thank you for joining the waitlist!';
-
-        // TODO: integrate with your backend or form tool here
-        // fetch('/api/waitlist', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:n, email:m}) })
-        //  .catch(()=>{});
-      });
-    })();
-  </script>
-</body>
-</html>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.371 0 0 5.371 
