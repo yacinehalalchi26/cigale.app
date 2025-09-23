@@ -1,11 +1,19 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" class="no-js">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
   <title>Cigale — Coming Soon</title>
   <meta name="description" content="Cigale is the booking marketplace for live entertainment." />
   <meta name="theme-color" content="#8e0e62" />
+  <meta name="color-scheme" content="dark light" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Cigale — Coming Soon" />
+  <meta property="og:description" content="The easiest way for event planners to book entertainers." />
+  <meta property="og:image" content="CigaleOG.jpg" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
 
   <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="CigaleIcon.png?v=2">
@@ -17,220 +25,277 @@
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --brand:#8e0e62;        /* primary */
+      --brand-600:#7b0d56;     /* hover */
+      --ink:#ffffff;           /* text */
+      --ink-dim:rgba(255,255,255,.72);
+      --glass:rgba(255,255,255,.06);
+      --glass-border:rgba(255,255,255,.12);
+      --glow:rgba(142,14,98,.6);
+      --radius:20px;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --elev:0 6px 32px rgba(0,0,0,.35);
+      --transition:all .35s cubic-bezier(.2,.8,.2,1);
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+      background:#0a0710;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow:hidden; /* true splash */
+    }
+
+    /* ===== Background Layer Stack ===== */
+    .bg{
+      position:fixed;inset:0;z-index:-3;overflow:hidden;pointer-events:none;
+    }
+    /* Fallback poster / photo for low-power or when video can't autoplay */
+    .bg picture,.bg img{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;
+      filter:blur(18px) saturate(1.15) brightness(.9);
+      transform:scale(1.03);
+    }
+    /* Optional video (auto-disabled for reduced data / motion) */
+    #bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:blur(14px) brightness(.85);opacity:.85}
+
+    /* Soft gradient fog + vignette */
+    .bg::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+      background:
+        radial-gradient(1200px 800px at 15% 20%, rgba(142,14,98,.55), transparent 60%),
+        radial-gradient(900px 700px at 85% 70%, rgba(57, 12, 79,.45), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45));
+      mix-blend-mode:screen;
+    }
+    .bg::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none; 
+      box-shadow:inset 0 0 220px rgba(0,0,0,.55);
+    }
+
+    /* Floating blurred blobs for subtle motion */
+    .blob{position:absolute;filter:blur(48px);opacity:.38;border-radius:50%;mix-blend-mode:screen}
+    .blob.b1{background:#ff49c873;width:36vmax;height:36vmax;left:-10vmax;top:-10vmax;animation:float 18s ease-in-out infinite}
+    .blob.b2{background:#7c3aed66;width:28vmax;height:28vmax;right:-8vmax;bottom:-6vmax;animation:float 22s ease-in-out infinite reverse}
+    @keyframes float{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(2%, -3%, 0) scale(1.06)}}
+
+    /* ===== Top Bar ===== */
+    .topbar{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;z-index:10}
+    .logo-link{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+    .logo{width:clamp(120px,12vw,180px);height:auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,.35));transition:transform .3s ease}
+    .logo-link:hover .logo{transform:translateY(-2px)}
+    .social{display:flex;gap:10px}
+    .social a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--glass-border);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:var(--transition)}
+    .social a:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+
+    /* ===== Center Content ===== */
+    .wrap{position:relative;z-index:2;display:grid;place-items:center;height:100dvh;padding:120px 18px 48px}
+    .card{width:min(680px,92vw);padding:clamp(20px,3.8vw,36px);border-radius:var(--radius);
+      background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(14px) saturate(140%);
+      -webkit-backdrop-filter:blur(14px) saturate(140%);
+      box-shadow:var(--shadow)
+    }
+
+    h1{margin:0 0 16px;font-size:clamp(1.8rem,4.5vw,3rem);line-height:1.18;font-weight:800;letter-spacing:.01em;text-transform:uppercase}
+    .sub{color:var(--ink-dim);font-weight:500;font-size:clamp(.95rem,2.2vw,1.05rem);line-height:1.6;margin:0 0 14px}
+    .highlight{color:#fff}
+
+    .tagline{display:inline-block;margin:12px 0 26px;padding:6px 12px;border-radius:999px;border:1px solid var(--glass-border);background:rgba(255,255,255,.08);font-size:.85rem;color:var(--ink-dim)}
+
+    /* Form */
+    form{display:grid;grid-template-columns:1fr;gap:12px;margin-top:8px}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width:560px){.row{grid-template-columns:1.2fr 1fr}}
+
+    .field{position:relative}
+    .visually-hidden{position:absolute!important;clip:rect(1px,1px,1px,1px);clip-path:inset(50%);height:1px;width:1px;overflow:hidden;white-space:nowrap;border:0;padding:0;margin:-1px}
+
+    input[type="text"],input[type="email"]{
+      height:56px;width:100%;padding:0 16px 0 48px;border-radius:16px;border:1px solid var(--glass-border);
+      background:rgba(12,10,19,.55);color:var(--ink);font-size:1rem;font-weight:600;letter-spacing:.2px;
+      outline:none;transition:var(--transition);
+    }
+    input::placeholder{color:rgba(255,255,255,.45);font-weight:500}
+    input:focus{border-color:var(--brand);box-shadow:0 0 0 6px rgba(142,14,98,.15)}
+
+    .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.6;pointer-events:none}
+    .icon svg{display:block}
+
+    button[type="submit"]{
+      height:56px;border:0;border-radius:16px;background:var(--brand);color:#fff;font-weight:800;letter-spacing:.35px;font-size:1rem;cursor:pointer;
+      transition:var(--transition);box-shadow:0 10px 30px var(--glow)
+    }
+    button[type="submit"]:hover{background:var(--brand-600);transform:translateY(-1px)}
+    button[type="submit"]:active{transform:translateY(0)}
+
+    .note{margin-top:10px;font-size:.82rem;color:var(--ink-dim)}
+
+    /* Submitted state */
+    .success{display:grid;gap:10px;place-items:center;text-align:center;padding:22px;border-radius:16px;border:1px solid var(--glass-border);background:rgba(12,10,19,.55)}
+    .success h2{margin:6px 0 0;font-size:1.25rem}
+
+    /* Footer */
+    footer{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;padding:16px 14px;color:var(--ink-dim);font-size:.88rem;z-index:3}
+
+    /* Motion respect */
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important}
+      #bg-video{display:none!important}
+      .blob{display:none}
+    }
+
+    /* Nice little entrance */
+    .fade-up{opacity:0;transform:translateY(18px);animation:enter .8s ease-out forwards}
+    .fade-up.d2{animation-delay:.12s}
+    .fade-up.d3{animation-delay:.24s}
+    .fade-up.d4{animation-delay:.36s}
+    @keyframes enter{to{opacity:1;transform:none}}
+
+    /* Mobile keyboard safe (iOS) */
+    @supports (height: 100dvh){.wrap{height:100dvh}}
+  </style>
 </head>
 <body>
-  <!-- Background Video (no poster anymore) -->
-  <video autoplay muted loop playsinline id="bg-video"></video>
+  <div class="bg" aria-hidden="true">
+    <!-- Fallback poster image (replace with your blurred high-res still) -->
+    <picture>
+      <source srcset="CigalePoster.avif" type="image/avif" />
+      <source srcset="CigalePoster.webp" type="image/webp" />
+      <img src="CigalePoster.jpg" alt="" loading="eager" decoding="async" />
+    </picture>
+    <video id="bg-video" playsinline muted loop preload="auto"></video>
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+  </div>
 
-  <!-- Top Left Logo -->
+  <!-- Top Bar -->
   <header class="topbar">
     <a href="https://www.linkedin.com/company/cigaleapp" class="logo-link" target="_blank" rel="noopener noreferrer">
       <img src="CigaleLogo.png" alt="Cigale" class="logo" />
     </a>
+    <nav class="social" aria-label="social links">
+      <a href="https://www.linkedin.com/company/cigaleapp" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.27c-.96 0-1.73-.78-1.73-1.73s.78-1.73 1.73-1.73c.96 0 1.73.78 1.73 1.73s-.77 1.73-1.73 1.73zm13.5 11.27h-3v-5.6c0-1.34-.03-3.06-1.87-3.06-1.87 0-2.16 1.46-2.16 2.96v5.7h-3v-10h2.88v1.37h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v5.6z"/></svg>
+      </a>
+    </nav>
   </header>
 
-  <!-- Main Content -->
-  <div class="content-container">
-    <div class="headline-container">
-      <h1>
-        <span class="headline-line">THE EASIEST WAY FOR EVENT PLANNERS</span><br>
-        <span class="headline-line">TO BOOK ENTERTAINERS</span>
-      </h1>
-    </div>
+  <!-- Main -->
+  <main class="wrap">
+    <section class="card fade-up">
+      <span class="tagline">COMING SOON</span>
+      <h1 class="fade-up d2">The easiest way for event planners to book entertainers</h1>
+      <p class="sub fade-up d3">A streamlined marketplace connecting planners with vetted artists, DJs, and live acts — in just a few clicks.</p>
 
-    <!-- Waitlist Form -->
-    <form id="waitlist" novalidate>
-      <input type="text" class="form-input" id="name" name="name" placeholder="Enter your full name" required />
-      <input type="email" class="form-input" id="email" name="email" placeholder="Enter your email" required />
-      <button type="submit">JOIN THE WAITLIST</button>
-    </form>
+      <form id="waitlist" class="fade-up d4" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="name" class="visually-hidden">Full name</label>
+            <span class="icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.865 0-7 3.134-7 7 0 .552.448 1 1 1h12c.552 0 1-.448 1-1 0-3.866-3.135-7-7-7z"/></svg></span>
+            <input id="name" name="name" type="text" placeholder="Full name" autocomplete="name" inputmode="text" required />
+          </div>
+          <div class="field">
+            <label for="email" class="visually-hidden">Email address</label>
+            <span class="icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 13.065L.001 6.5 0 19a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V6.5L12 13.065zM22 5H2l10 6 10-6z"/></svg></span>
+            <input id="email" name="email" type="email" placeholder="Email address" autocomplete="email" inputmode="email" required />
+          </div>
+        </div>
+        <!-- Honeypot -->
+        <input type="text" name="company" id="company" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" id="submit">Join the waitlist</button>
+        <p class="note" id="privacy">No spam. Unsubscribe anytime.</p>
+        <div class="visually-hidden" aria-live="polite" id="live"></div>
+      </form>
 
-    <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
-  </div>
+      <div id="success" class="success" hidden>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.371 0 0 5.371 0 12s5.371 12 12 12 12-5.371 12-12S18.629 0 12 0zm-1.2 17.4l-4.8-4.8 1.692-1.692 3.108 3.108 6.9-6.9 1.692 1.692-8.592 8.592z"/></svg>
+        <h2>You're on the list 🎉</h2>
+        <p class="sub">We'll keep you posted with launch news and early access.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>© <span id="year"></span> Cigale. All rights reserved.</footer>
 
   <script>
-    // Video source logic
-    const bgVideo = document.getElementById('bg-video');
-    const isMobile = window.innerWidth <= 414;
-    bgVideo.innerHTML = '';
-    const source = document.createElement('source');
-    source.type = 'video/mp4';
-    source.src = isMobile ? 'Cigale App Mobile Video.mp4' : 'Cigale App Web Video.mp4';
-    bgVideo.appendChild(source);
+    document.documentElement.classList.remove('no-js');
 
-    // Copyright year
+    // ===== Dynamic year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Form handling
-    const form = document.getElementById('waitlist');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const button = form.querySelector('button');
+    // ===== Background video logic with smart fallbacks
+    (function initVideo(){
+      const video = document.getElementById('bg-video');
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const saveData = navigator.connection && (navigator.connection.saveData || (navigator.connection.effectiveType||'').includes('2g'));
+      const isSmall = Math.min(window.innerWidth, window.innerHeight) <= 480;
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = nameInput.value.trim();
-      const email = emailInput.value.trim().toLowerCase();
-
-      if (!name) {
-        nameInput.focus();
-        nameInput.style.borderColor = '#ff4444';
-        setTimeout(() => nameInput.style.borderColor = 'rgba(255,255,255,0.1)', 500);
+      if(reduceMotion || saveData){
+        // Keep poster only
+        video.parentElement.removeChild(video);
         return;
       }
 
-      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-      if (!isValidEmail) {
-        emailInput.focus();
-        emailInput.style.borderColor = '#ff4444';
-        setTimeout(() => emailInput.style.borderColor = 'rgba(255,255,255,0.1)', 500);
-        return;
+      // Choose source based on viewport
+      const src = isSmall ? 'Cigale App Mobile Video.mp4' : 'Cigale App Web Video.mp4';
+      const source = document.createElement('source');
+      source.type = 'video/mp4';
+      source.src = src;
+      video.appendChild(source);
+
+      // Attempt autoplay; if it fails, remove video (poster stays)
+      video.muted = true; video.playsInline = true; video.loop = true;
+      const playAttempt = video.play();
+      if(playAttempt && typeof playAttempt.then === 'function'){
+        playAttempt.catch(()=>{ try{ video.remove(); }catch(e){} });
       }
 
-      // Show submitted info instead of inputs
-      form.innerHTML = `
-        <div class="submitted-message">
-          <p>✅ Thank you for joining the waitlist!</p>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-        </div>
-      `;
-    });
+      // Keep full-bleed sizing on resize
+      const sizeVideo = ()=>{ video.style.width='100vw'; video.style.height='100vh'; };
+      window.addEventListener('resize', sizeVideo, {passive:true});
+      sizeVideo();
+    })();
 
-    // Keep video full screen
-    const sizeVideo = () => {
-      bgVideo.style.width = '100vw';
-      bgVideo.style.height = '100vh';
-    };
-    window.addEventListener('resize', sizeVideo);
-    sizeVideo();
+    // ===== Form handling (client-only demo)
+    (function formLogic(){
+      const form = document.getElementById('waitlist');
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const success = document.getElementById('success');
+      const live = document.getElementById('live');
+
+      // helpers
+      const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+      const mark = (el)=>{ el.style.borderColor = '#ff5a5a'; setTimeout(()=> el.style.borderColor = 'var(--glass-border)', 700); };
+
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const honey = document.getElementById('company');
+        const n = name.value.trim();
+        const m = email.value.trim().toLowerCase();
+
+        if(honey.value) return; // simple bot trap
+        if(!n){ name.focus(); mark(name); return; }
+        if(!emailRE.test(m)){ email.focus(); mark(email); return; }
+
+        // Show success state (swap form)
+        form.hidden = true;
+        success.hidden = false;
+        live.textContent = 'Thank you for joining the waitlist!';
+
+        // TODO: integrate with your backend or form tool here
+        // fetch('/api/waitlist', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:n, email:m}) })
+        //  .catch(()=>{});
+      });
+    })();
   </script>
-
-  <style>
-    :root { 
-      --brand: #8e0e62; 
-      --brand-dark: #6e0b4b; 
-      --ink: #fff; 
-      --transition: all 0.3s ease;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; color: var(--ink); }
-
-    /* Background Video */
-    #bg-video {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      object-position: center;
-      z-index: -1;
-      filter: brightness(0.7);
-      pointer-events: none;
-    }
-
-    /* Top Left Logo */
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      padding: 20px 24px;
-      z-index: 5;
-    }
-    .logo {
-      width: clamp(120px, 12vw, 180px);
-      height: auto;
-      filter: drop-shadow(0 6px 16px rgba(0,0,0,0.35));
-    }
-
-    /* Content centered */
-    .content-container {
-      position: relative;
-      z-index: 2;
-      width: 90%;
-      max-width: 640px;
-      margin: 0 auto;
-      padding-top: 7rem; /* leaves room under logo */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3rem;
-      text-align: center;
-    }
-
-    /* Headline */
-    h1 {
-      font-weight: 700;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      line-height: 1.3;
-      text-transform: uppercase;
-      max-width: 90%;
-      margin: 0 auto;
-    }
-
-    .headline-line {
-      opacity: 0;
-      transform: translateY(30px);
-      animation: headlineSlideIn 0.8s ease-out forwards;
-    }
-    .headline-line:nth-child(2) { animation-delay: 0.2s; }
-    @keyframes headlineSlideIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Form */
-    #waitlist {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      gap: 1.5rem;
-    }
-    .form-input {
-      height: 60px;
-      padding: 0 20px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.08);
-      color: var(--ink);
-      font-size: 1.1rem;
-      font-weight: 500;
-    }
-    .form-input::placeholder { color: rgba(255,255,255,0.4); }
-    .form-input:focus {
-      outline: none;
-      border-color: var(--brand);
-      background: rgba(255,255,255,0.1);
-    }
-
-    #waitlist button {
-      height: 52px;
-      padding: 0 22px;
-      border-radius: 18px;
-      background: var(--brand);
-      color: var(--ink);
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      border: none;
-    }
-    #waitlist button:hover { background: var(--brand-dark); }
-
-    /* Submitted message */
-    .submitted-message {
-      background: rgba(0,0,0,0.5);
-      padding: 1.5rem;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      line-height: 1.6;
-    }
-
-    footer {
-      font-size: 0.85rem;
-      opacity: 0.8;
-    }
-  </style>
 </body>
 </html>
