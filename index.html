@@ -144,6 +144,11 @@
       box-shadow: 0 8px 24px var(--glow);
     }
     .modal-actions button:hover { background: var(--brand-600); transform: translateY(-1px); }
+
+    /* ===== Phone-only headline tweak ===== */
+    @media (max-width: 480px){
+      h1{ font-size: clamp(1.35rem, 5vw, 1.6rem); }
+    }
   </style>
 </head>
 <body>
