@@ -104,6 +104,46 @@
     .fade-up.d4{animation-delay:.36s}
     @keyframes enter{to{opacity:1;transform:none}}
     @supports (height:100dvh){.wrap{min-height:100dvh}}
+
+    /* ===== Modal (popup) ===== */
+    dialog#thanks {
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      background: rgba(12,10,19,.75);
+      color: var(--ink);
+      padding: 24px;
+      width: min(520px, 92vw);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      text-align: center;
+    }
+    dialog#thanks::backdrop {
+      background: rgba(0,0,0,.6);
+    }
+    .modal-title {
+      margin: 0 0 8px;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+    .modal-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .modal-actions button {
+      height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      background: var(--brand);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 8px 24px var(--glow);
+    }
+    .modal-actions button:hover { background: var(--brand-600); transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -156,6 +196,15 @@
 
   <footer>© Cigale 2025 — All rights reserved.</footer>
 
+  <!-- Modal popup -->
+  <dialog id="thanks" aria-labelledby="thanks-title" aria-describedby="thanks-desc">
+    <h2 id="thanks-title" class="modal-title">Thank you for joining our waitlist!</h2>
+    <p id="thanks-desc">We’ll be in touch as soon as we’re ready to launch.</p>
+    <div class="modal-actions">
+      <button id="close-thanks" type="button">Close</button>
+    </div>
+  </dialog>
+
   <script>
     // ===== Background video: mobile + desktop
     (function initVideo(){
@@ -174,13 +223,15 @@
       addEventListener('resize', ()=>{ video.style.width='100vw'; video.style.height='100vh'; }, {passive:true});
     })();
 
-    // ===== Form submit -> show success state
+    // ===== Form submit -> popup "Thank you"
     (function formLogic(){
-      const form = document.getElementById('waitlist');
-      const name = document.getElementById('name');
-      const email = document.getElementById('email');
-      const success = document.getElementById('success');
-      const live = document.getElementById('live');
+      const form   = document.getElementById('waitlist');
+      const name   = document.getElementById('name');
+      const email  = document.getElementById('email');
+      const live   = document.getElementById('live');
+      const dialog = document.getElementById('thanks');
+      const close  = document.getElementById('close-thanks');
+
       const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
       const nudge = el => { el.style.borderColor = '#ff5a5a'; setTimeout(()=> el.style.borderColor = 'var(--glass-border)', 700); };
 
@@ -191,14 +242,35 @@
         if(!n){ name.focus(); nudge(name); return; }
         if(!emailRE.test(m)){ email.focus(); nudge(email); return; }
 
-        // Toggle views
+        // Optional: hide form after submit (preserves your previous behavior)
         form.hidden = true;
-        if(success) success.hidden = false;
+
+        // Announce for screen readers
         live.textContent = 'Thank you for joining the waitlist!';
+
+        // Show modal popup (fallback to alert if <dialog> unsupported)
+        if (dialog && typeof dialog.showModal === 'function') {
+          dialog.showModal();
+        } else {
+          alert('Thank you for joining our waitlist!');
+        }
 
         // TODO: integrate with backend if needed
         // fetch('/api/waitlist', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({name:n, email:m})}).catch(()=>{});
       });
+
+      // Close button & backdrop click
+      if (close && dialog) {
+        close.addEventListener('click', ()=> dialog.close());
+        dialog.addEventListener('click', (evt)=>{
+          const rect = dialog.getBoundingClientRect();
+          const inDialog = (
+            evt.clientX >= rect.left && evt.clientX <= rect.right &&
+            evt.clientY >= rect.top  && evt.clientY <= rect.bottom
+          );
+          if (!inDialog) dialog.close(); // click on backdrop
+        });
+      }
     })();
   </script>
 </body>
